@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
@@ -43,6 +44,9 @@ body {
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   padding: 20px;
   min-height: 100vh;
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(255, 234, 0, 0.03), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(255, 255, 255, 0.02), transparent 25%);
   transition: background 0.3s, color 0.3s;
 }
 
@@ -54,9 +58,10 @@ header {
   margin-bottom: 30px;
   padding: 12px 30px;
   background: var(--bg-card);
+  backdrop-filter: blur(10px);
   border: 1px solid var(--border);
   border-radius: 16px;
-  box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 30px rgba(0,0,0,0.4);
   width: max-content;
   max-width: 100%;
   margin-left: auto;
@@ -71,14 +76,14 @@ header {
 }
 
 .brand img.logo {
-  width: 55px;
-  height: 55px;
+  width: 65px;
+  height: 65px;
   object-fit: cover;
   clip-path: circle(38% at 50% 50%); 
 }
 
 .brand h1 {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -115,10 +120,10 @@ header {
   transform: rotate(45deg);
 }
 
-/* ================= GRID & CARDS ================= */
+/* ================= RESPONSIVE GRID & CARDS ================= */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 25px;
   max-width: 1300px;
   margin: 0 auto;
@@ -132,25 +137,34 @@ header {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s;
   position: relative;
   overflow: hidden;
-  transition: background 0.3s, border 0.3s;
+}
+
+.card:hover {
+  background: var(--bg-card-hover);
+  box-shadow: 0 12px 45px rgba(0,0,0,0.6);
+  border-color: rgba(255, 234, 0, 0.2);
 }
 
 .card.disabled {
-  opacity: 0.5;
+  opacity: 0.6;
   filter: grayscale(0.8);
 }
 
+/* ================= CARD HEADER ================= */
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .card-title {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -178,26 +192,38 @@ header {
 .badge.wifi { cursor: pointer; transition: 0.2s; }
 .badge.wifi:hover { color: var(--text-main); border-color: var(--accent); }
 
-/* SWITCH */
-.switch { position: relative; display: inline-block; width: 42px; height: 22px; }
+/* ===== SWITCH ===== */
+.switch-container { display: flex; align-items: center; }
+.switch { position: relative; display: inline-block; width: 44px; height: 24px; }
 .switch input { opacity: 0; width: 0; height: 0; }
 .slider {
-  position: absolute; cursor: pointer;
+  position: absolute;
+  cursor: pointer;
   top: 0; left: 0; right: 0; bottom: 0;
   background-color: var(--border);
-  transition: .3s; border-radius: 22px;
+  transition: .4s;
+  border-radius: 24px;
 }
 .slider:before {
-  position: absolute; content: "";
+  position: absolute;
+  content: "";
   height: 16px; width: 16px;
   left: 3px; bottom: 3px;
   background-color: var(--text-muted);
-  transition: .3s; border-radius: 50%;
+  transition: .4s;
+  border-radius: 50%;
 }
-input:checked + .slider { background-color: var(--accent); }
-input:checked + .slider:before { transform: translateX(20px); background-color: #000; }
+input:checked + .slider {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 10px var(--accent-glow);
+}
+input:checked + .slider:before {
+  transform: translateX(20px);
+  background-color: #000;
+}
 
-/* PREVIEW CAM */
+/* ================= VISOR DE IMAGEN ================= */
 .preview-container {
   position: relative;
   width: 100%;
@@ -205,56 +231,117 @@ input:checked + .slider:before { transform: translateX(20px); background-color: 
   background: #000;
   border-radius: 12px;
   overflow: hidden;
-  border: 1px solid var(--border);
+  border: 1px solid rgba(255, 234, 0, 0.15);
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.9);
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.preview-container img { width: 100%; height: 100%; object-fit: cover; }
+
+.preview-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
 .no-signal {
   color: var(--text-muted);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
+.no-signal i { font-size: 2rem; opacity: 0.5; }
+
 .overlay-top, .overlay-bottom {
-  position: absolute; left: 0; width: 100%; padding: 8px;
-  display: flex; justify-content: space-between; align-items: center;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
+  position: absolute;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
   pointer-events: none;
 }
-.overlay-bottom { top: auto; bottom: 0; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); }
-.location-tag {
-  font-size: 0.7rem; color: #fff; background: rgba(0,0,0,0.5);
-  padding: 3px 6px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1);
+.overlay-bottom {
+  top: auto;
+  bottom: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
 }
-.time-tag { font-family: monospace; font-size: 0.75rem; color: var(--accent); }
 
-/* BOTONERA */
-.action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.location-tag {
+  font-size: 0.75rem;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(0,0,0,0.6);
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  backdrop-filter: blur(4px);
+}
+
+.time-tag {
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  color: var(--accent);
+  font-weight: bold;
+}
+
+/* ================= CONTROLES ================= */
+.action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
 .btn {
   background: var(--bg-app);
   border: 1px solid var(--border);
   color: var(--text-main);
-  padding: 10px;
-  border-radius: 8px;
-  font-size: 0.8rem;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
-  display: flex; justify-content: center; align-items: center; gap: 6px;
-  transition: 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
 }
-.btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
-.btn.primary { background: var(--accent); color: #000; border: none; }
-.btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-/* ================= SUB-MENÚ FLOTANTE CENTRADO EN TARJETA ================= */
+.btn:hover:not(:disabled) {
+  background: rgba(255, 234, 0, 0.1);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn.primary {
+  background: var(--accent);
+  color: #000;
+  border: none;
+}
+.btn.primary:hover:not(:disabled) {
+  background: #ffea00;
+  box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ================= SUB-MENÚS FLOTANTES CENTRADOS EN CADA TARJETA ================= */
 .sub-panel {
   display: none;
   position: absolute;
-  top: 50%; left: 50%;
+  top: 50%;
+  left: 50%;
   transform: translate(-50%, -50%);
   width: 90%;
   max-width: 320px;
@@ -272,20 +359,79 @@ input:checked + .slider:before { transform: translateX(20px); background-color: 
 .sub-panel.active { display: flex; }
 
 .sub-panel-header {
-  display: flex; justify-content: space-between; align-items: center;
-  font-size: 0.9rem; font-weight: 600; color: var(--accent);
-  border-bottom: 1px solid var(--border); padding-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--accent);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
 }
-.sub-panel-close { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem; }
+
+.sub-panel-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1rem;
+  transition: color 0.2s;
+}
 .sub-panel-close:hover { color: var(--text-main); }
-.sub-panel-content { font-size: 0.8rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 6px; }
+
+.sub-panel-content {
+  font-size: 0.85rem;
+  color: var(--text-main);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sub-panel-content p {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.setting-row { display: flex; flex-direction: column; gap: 6px; }
+.setting-row label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  display: flex;
+  justify-content: space-between;
+}
+
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  background: transparent;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  margin-top: -6px;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  cursor: pointer;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+}
 
 /* ================= MODAL GLOBAL DE CONFIGURACIÓN ================= */
 .modal-overlay {
   display: none;
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
-  justify-content: center; align-items: center; z-index: 2000;
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(5px);
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
 }
 .modal-overlay.active { display: flex; }
 .modal-box {
@@ -297,7 +443,10 @@ input:checked + .slider:before { transform: translateX(20px); background-color: 
   box-shadow: 0 20px 50px rgba(0,0,0,0.8);
   animation: popIn 0.3s ease-out;
 }
-.modal-header { display: flex; justify-content: space-between; align-items: center; font-size: 1.2rem; font-weight: 700; color: var(--accent); }
+.modal-header {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 1.2rem; font-weight: 700; color: var(--accent);
+}
 .form-group { display: flex; flex-direction: column; gap: 6px; }
 .form-group label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
 .form-control {
@@ -307,19 +456,27 @@ input:checked + .slider:before { transform: translateX(20px); background-color: 
 .form-control:focus { outline: none; border-color: var(--accent); }
 
 @keyframes popIn {
-  from { opacity: 0; transform: translate(-50%, -48%) scale(0.95); }
-  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 480px) {
+  body { padding: 10px; }
+  .brand h1 { font-size: 1.2rem; }
+  .brand img.logo { width: 50px; height: 50px; }
+  .btn { font-size: 0.75rem; padding: 10px 8px; }
+  .card { padding: 15px; }
 }
 </style>
 </head>
 <body onclick="handleGlobalClick(event)">
 
-<!-- BOTÓN ENGRANAJE CONFIGURACIÓN -->
+<!-- BOTÓN ENGRANAJE GLOBAL -->
 <button class="global-settings-btn" onclick="toggleSettingsModal(event)"><i class="fa-solid fa-gear"></i></button>
 
 <header>
   <div class="brand">
-    <img src="logo.png" class="logo" alt="Logo">
+    <img src="logo.png" class="logo" alt="Logo Aurum">
     <h1 id="txt-brand-title">Aurumsys <span>| VISION</span></h1>
   </div>
 </header>
@@ -390,7 +547,7 @@ const dict = {
     apiKeyLabel: "API Key (Alertas Cloud)",
     waLabel: "Número de WhatsApp (Alertas)",
     saveBtn: "Guardar Cambios",
-    connected: "Conectado a la red central"
+    connected: "Dispositivo en línea geolocalizado en campo."
   },
   en: {
     trap: "Trap",
@@ -410,7 +567,7 @@ const dict = {
     apiKeyLabel: "API Key (Cloud Alerts)",
     waLabel: "WhatsApp Number (Alerts)",
     saveBtn: "Save Changes",
-    connected: "Connected to core network"
+    connected: "Device online geolocated in field."
   },
   fr: {
     trap: "Piège",
@@ -430,7 +587,7 @@ const dict = {
     apiKeyLabel: "Clé API (Alertes Cloud)",
     waLabel: "Numéro WhatsApp (Alertes)",
     saveBtn: "Enregistrer",
-    connected: "Connecté au réseau"
+    connected: "Appareil en ligne géolocalisé."
   },
   de: {
     trap: "Falle",
@@ -450,7 +607,7 @@ const dict = {
     apiKeyLabel: "API-Schlüssel (Cloud-Benachrichtigungen)",
     waLabel: "WhatsApp-Nummer (Benachrichtigungen)",
     saveBtn: "Änderungen speichern",
-    connected: "Mit Netzwerk verbunden"
+    connected: "Gerät online im Feld geolokalisiert."
   },
   zh: {
     trap: "捕虫器",
@@ -470,7 +627,7 @@ const dict = {
     apiKeyLabel: "API 密钥 (云端警报)",
     waLabel: "WhatsApp 号码 (接收警报)",
     saveBtn: "保存更改",
-    connected: "已连接到核心网络"
+    connected: "设备在线且已定位。"
   },
   ja: {
     trap: "トラップ",
@@ -490,7 +647,7 @@ const dict = {
     apiKeyLabel: "APIキー (クラウドアラート)",
     waLabel: "WhatsApp番号 (アラート送信先)",
     saveBtn: "変更を保存",
-    connected: "ネットワーク接続済み"
+    connected: "デバイスはオンラインです。"
   },
   ru: {
     trap: "Ловушка",
@@ -510,7 +667,7 @@ const dict = {
     apiKeyLabel: "API Ключ (Облачные оповещения)",
     waLabel: "Номер WhatsApp (Для алертов)",
     saveBtn: "Сохранить изменения",
-    connected: "Подключено к сети"
+    connected: "Устройство в сети геолоцировано."
   }
 };
 
@@ -531,7 +688,7 @@ function updateTexts(){
   document.getElementById('txt-whatsapp-label').textContent = t('waLabel');
   document.getElementById('txt-save-btn').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> ${t('saveBtn')}`;
 
-  for(let i=1; i<=3; i++){
+  for(let i=1; i<=TOTAL_TRAPS; i++){
     const card = document.getElementById(`card${i}`);
     if(!card) continue;
     card.querySelector('.card-title').innerHTML = `<i class="fa-solid fa-microchip"></i> ${t('trap')} ${i}`;
@@ -563,26 +720,93 @@ function closeSettingsModal(){
   document.getElementById('settingsModal').classList.remove('active');
 }
 function saveGlobalSettings(){
+  localStorage.setItem('aurum_apikey', document.getElementById('apiKeyInput').value);
+  localStorage.setItem('aurum_whatsapp', document.getElementById('whatsappInput').value);
   alert("¡Configuración guardada con éxito!");
   closeSettingsModal();
 }
 
-/* ================= CIERRE GLOBAL AL CLIC ================= */
+// Cierre global al hacer clic en cualquier parte de la pantalla
 function handleGlobalClick(e){
-  // Cierra todos los sub-paneles internos de las tarjetas si se hace clic fuera de ellos
   document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
 }
 
-/* ================= RENDERIZADO DE TARJETAS ================= */
+/* ================= CONFIG DE TRAMPAS Y FIREBASE ================= */
 const TOTAL_TRAPS = 3;
+const CAMERA_LIVE_DURATION = 20000;
+
+const MAIN_ESP_BASE = "http://10.153.210.142";
+const STREAM_URL = MAIN_ESP_BASE + "/stream";
+const FIREBASE_DB = "https://t-sonda-2-default-rtdb.firebaseio.com";
+
+function nowString(){
+  const d = new Date();
+  return d.toISOString().replace("T"," ").substring(0,19);
+}
+
+function rssiToBars(rssi){
+  if(rssi > -60) return '<i class="fa-solid fa-wifi"></i> 100%';
+  if(rssi > -70) return '<i class="fa-solid fa-wifi"></i> 70%';
+  if(rssi > -80) return '<i class="fa-solid fa-wifi" style="opacity:0.6"></i> 40%';
+  return '<i class="fa-solid fa-wifi" style="opacity:0.3; color:var(--danger)"></i> 10%';
+}
+
+function moduleKey(id){ return `aurum_module_${id}`; }
+function isEnabled(id){
+  const v = localStorage.getItem(moduleKey(id));
+  return v === null ? true : v === "true";
+}
+function setEnabled(id,val){ localStorage.setItem(moduleKey(id), val); }
+
+async function getTrapState(id){
+  const res = await fetch(`${FIREBASE_DB}/traps/${id}.json`).catch(()=>null);
+  return res ? await res.json() : null;
+}
+function sendCommand(id, cmd){
+  fetch(`${FIREBASE_DB}/traps/${id}/command.json`, {
+    method: "PUT", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(cmd)
+  }).catch(e=>console.log("Error", e));
+}
+
+function applyFilters(previewImg, z, b, c){
+  if(!previewImg) return;
+  previewImg.style.transform = `scale(${z})`;
+  previewImg.style.filter = `brightness(${b}) contrast(${c})`;
+}
+
+async function openLiveCamera(id, container, previewImg, btn){
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Conectando...';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    previewImg.style.display = 'block';
+    previewImg.src = `${STREAM_URL}?t=${Date.now()}`;
+    
+    const noSig = container.querySelector('.no-signal');
+    if(noSig) noSig.style.display = 'none';
+
+    btn.innerHTML = '<i class="fa-solid fa-video"></i> Transmitiendo';
+    btn.classList.add('primary');
+
+    setTimeout(()=>{
+      btn.innerHTML = `<i class="fa-solid fa-satellite-dish"></i> <span id="cam-txt${id}">${t('liveCam')}</span>`;
+      btn.classList.remove('primary');
+      btn.disabled = false;
+    }, CAMERA_LIVE_DURATION);
+  }, 1000);
+}
+
+/* ================= RENDER DE TARJETAS ================= */
 const grid = document.getElementById("grid");
-const mockLocations = ["Sector Alfa - Lat: -33.8", "Sector Beta - Lat: -33.9", "Sector Gamma - Lat: -34.0"];
+const mockLocations = ["Sector Alfa - Lat: -33.8, Lon: -70.7", "Sector Beta - Lat: -33.9, Lon: -70.8", "Sector Gamma - Lat: -34.0, Lon: -70.9"];
 
 for(let i=1; i<=TOTAL_TRAPS; i++){
   const card = document.createElement("div");
   card.className = "card";
   card.id = `card${i}`;
-  const mockBattery = Math.floor(Math.random() * 50) + 40;
+  const isEn = isEnabled(i);
+  const mockBattery = Math.floor(Math.random() * 60) + 40;
   const loc = mockLocations[i-1];
 
   card.innerHTML = `
@@ -591,50 +815,75 @@ for(let i=1; i<=TOTAL_TRAPS; i++){
         <i class="fa-solid fa-microchip"></i> ${t('trap')} ${i}
       </div>
       <div class="telemetry-badges">
-        <span class="badge battery"><i class="fa-solid fa-battery-full"></i> ${mockBattery}%</span>
-        <span class="badge wifi" id="wifi${i}"><i class="fa-solid fa-wifi"></i> 100%</span>
-        <div class="switch">
-          <input type="checkbox" id="toggle${i}" checked>
-          <span class="slider"></span>
+        <span class="badge battery" id="batt${i}"><i class="fa-solid fa-battery-full"></i> ${mockBattery}%</span>
+        <span class="badge wifi" id="wifi${i}" title="Ver red actual"><i class="fa-solid fa-wifi"></i> --</span>
+        <div class="switch-container">
+          <label class="switch">
+            <input type="checkbox" id="toggle${i}" ${isEn ? 'checked' : ''}>
+            <span class="slider"></span>
+          </label>
         </div>
       </div>
     </div>
 
-    <div class="preview-container" onclick="event.stopPropagation()">
+    <div class="preview-container" id="container${i}" onclick="event.stopPropagation()">
       <div class="overlay-top">
-        <div class="location-tag"><i class="fa-solid fa-location-crosshairs"></i> ${loc}</div>
+        <div class="location-tag"><i class="fa-solid fa-location-crosshairs"></i> ${loc.split(',')[0]}</div>
       </div>
       <div class="no-signal" id="nosig${i}">
-        <i class="fa-regular fa-image" style="font-size: 1.8rem;"></i>
+        <i class="fa-regular fa-image"></i>
         <span id="nosig-txt${i}">${t('waiting')}</span>
       </div>
-      <img src="" id="img${i}" style="display:none;" alt="Cam">
+      <img src="" id="img${i}" style="display:none;" alt="Cámara">
+      <div class="overlay-bottom">
+        <div class="time-tag" id="time${i}">${nowString()}</div>
+      </div>
     </div>
 
     <div class="action-grid" onclick="event.stopPropagation()">
-      <button class="btn" id="camBtn${i}" onclick="openLive(${i})"><i class="fa-solid fa-satellite-dish"></i> <span id="cam-txt${i}">${t('liveCam')}</span></button>
-      <button class="btn" onclick="toggleSubPanel(event, 'settings${i}')"><i class="fa-solid fa-sliders"></i> <span id="set-txt${i}">${t('calibration')}</span></button>
-      <button class="btn" onclick="toggleSubPanel(event, 'save-panel${i}')"><i class="fa-solid fa-camera"></i> <span id="save-txt${i}">${t('saveCap')}</span></button>
-      <button class="btn" onclick="toggleSubPanel(event, 'loc-panel${i}')"><i class="fa-solid fa-map-location-dot"></i> <span id="loc-txt${i}">${t('location')}</span></button>
+      <button class="btn" id="cam${i}"><i class="fa-solid fa-satellite-dish"></i> <span id="cam-txt${i}">${t('liveCam')}</span></button>
+      <button class="btn" id="set${i}"><i class="fa-solid fa-sliders"></i> <span id="set-txt${i}">${t('calibration')}</span></button>
+      <button class="btn" id="save${i}"><i class="fa-solid fa-camera"></i> <span id="save-txt${i}">${t('saveCap')}</span></button>
+      <button class="btn" id="loc${i}"><i class="fa-solid fa-map-location-dot"></i> <span id="loc-txt${i}">${t('location')}</span></button>
     </div>
 
-    <!-- SUB-PANEL CALIBRACIÓN -->
+    <!-- PANEL DE CALIBRACIÓN -->
     <div class="sub-panel" id="settings${i}" onclick="event.stopPropagation()">
       <div class="sub-panel-header">
-        <span><i class="fa-solid fa-sliders"></i> Calibración</span>
-        <button class="sub-panel-close" onclick="closePanels()"><i class="fa-solid fa-xmark"></i></button>
+        <span><i class="fa-solid fa-sliders"></i> Calibración de Imagen</span>
+        <button class="sub-panel-close" onclick="closeAllPanels()"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <div class="sub-panel-content">
-        <label>Zoom Digital: 1.0x</label>
-        <input type="range" min="1" max="3" step="0.1" value="1" style="width:100%">
+      <div class="setting-row">
+        <label><span>Zoom Digital</span> <span id="z-val${i}">1.0x</span></label>
+        <input type="range" id="z${i}" min="1" max="3" step="0.1" value="1">
+      </div>
+      <div class="setting-row">
+        <label><span>Brillo IR</span> <span id="b-val${i}">100%</span></label>
+        <input type="range" id="b${i}" min="0.5" max="2" step="0.1" value="1">
+      </div>
+      <div class="setting-row">
+        <label><span>Contraste</span> <span id="c-val${i}">100%</span></label>
+        <input type="range" id="c${i}" min="0.5" max="2" step="0.1" value="1">
       </div>
     </div>
 
-    <!-- SUB-PANEL GUARDAR -->
+    <!-- PANEL DE WIFI -->
+    <div class="sub-panel" id="wifi-panel${i}" onclick="event.stopPropagation()">
+      <div class="sub-panel-header">
+        <span><i class="fa-solid fa-wifi"></i> ${t('wifiNet')}</span>
+        <button class="sub-panel-close" onclick="closeAllPanels()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="sub-panel-content">
+        <strong id="wifi-ssid${i}">Aurumsys_Net_5G</strong>
+        <p>Señal estable conectada al nodo central.</p>
+      </div>
+    </div>
+
+    <!-- PANEL DE GUARDAR CAPTURA -->
     <div class="sub-panel" id="save-panel${i}" onclick="event.stopPropagation()">
       <div class="sub-panel-header">
         <span><i class="fa-solid fa-camera"></i> ${t('manager')}</span>
-        <button class="sub-panel-close" onclick="closePanels()"><i class="fa-solid fa-xmark"></i></button>
+        <button class="sub-panel-close" onclick="closeAllPanels()"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="sub-panel-content">
         <strong>${t('savedOk')}</strong>
@@ -642,11 +891,11 @@ for(let i=1; i<=TOTAL_TRAPS; i++){
       </div>
     </div>
 
-    <!-- SUB-PANEL UBICACIÓN -->
+    <!-- PANEL DE UBICACIÓN -->
     <div class="sub-panel" id="loc-panel${i}" onclick="event.stopPropagation()">
       <div class="sub-panel-header">
         <span><i class="fa-solid fa-map-location-dot"></i> ${t('coords')}</span>
-        <button class="sub-panel-close" onclick="closePanels()"><i class="fa-solid fa-xmark"></i></button>
+        <button class="sub-panel-close" onclick="closeAllPanels()"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="sub-panel-content">
         <strong>${loc}</strong>
@@ -654,28 +903,121 @@ for(let i=1; i<=TOTAL_TRAPS; i++){
       </div>
     </div>
   `;
+
   grid.appendChild(card);
+
+  const toggle = card.querySelector(`#toggle${i}`);
+  const camBtn = card.querySelector(`#cam${i}`);
+  const setBtn = card.querySelector(`#set${i}`);
+  const saveBtn = card.querySelector(`#save${i}`);
+  const locBtn = card.querySelector(`#loc${i}`);
+  const wifiBtn = card.querySelector(`#wifi${i}`);
+  
+  const container = card.querySelector(`#container${i}`);
+  const img = card.querySelector(`#img${i}`);
+  const timeLabel = card.querySelector(`#time${i}`);
+  
+  const settingsPanel = card.querySelector(`#settings${i}`);
+  const wifiPanel = card.querySelector(`#wifi-panel${i}`);
+  const savePanel = card.querySelector(`#save-panel${i}`);
+  const locPanel = card.querySelector(`#loc-panel${i}`);
+
+  const zIn = card.querySelector(`#z${i}`), bIn = card.querySelector(`#b${i}`), cIn = card.querySelector(`#c${i}`);
+  const zVal = card.querySelector(`#z-val${i}`), bVal = card.querySelector(`#b-val${i}`), cVal = card.querySelector(`#c-val${i}`);
+  const wifiSsidLabel = card.querySelector(`#wifi-ssid${i}`);
+
+  window.closeAllPanels = function() {
+    document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
+  };
+
+  wifiBtn.onclick = async (e) => {
+    e.stopPropagation();
+    closeAllPanels();
+    try {
+      const state = await getTrapState(i);
+      wifiSsidLabel.textContent = (state && state.ssid) ? state.ssid : "Aurumsys_Net_5G (Red Local)";
+    } catch(e) {
+      wifiSsidLabel.textContent = "Aurumsys_Net_5G";
+    }
+    wifiPanel.classList.add('active');
+  };
+
+  saveBtn.onclick = (e) => {
+    e.stopPropagation();
+    closeAllPanels();
+    savePanel.classList.add('active');
+  };
+
+  locBtn.onclick = (e) => {
+    e.stopPropagation();
+    closeAllPanels();
+    locPanel.classList.add('active');
+  };
+
+  setBtn.onclick = (e) => {
+    e.stopPropagation();
+    const isOpen = settingsPanel.classList.contains('active');
+    closeAllPanels();
+    if(!isOpen) settingsPanel.classList.add('active');
+  };
+
+  setInterval(() => { timeLabel.textContent = nowString(); }, 1000);
+
+  function applyState(){
+    const en = toggle.checked;
+    setEnabled(i, en);
+    card.classList.toggle("disabled", !en);
+    camBtn.disabled = !en || i !== 1;
+    saveBtn.disabled = !en;
+    locBtn.disabled = !en;
+  }
+
+  toggle.addEventListener('change', () => {
+    applyState();
+    sendCommand(i, toggle.checked ? "ENABLE" : "DISABLE");
+  });
+
+  camBtn.onclick = (e) => {
+    e.stopPropagation();
+    openLiveCamera(i, container, img, camBtn);
+  };
+
+  const updateFilters = () => {
+    applyFilters(img, zIn.value, bIn.value, cIn.value);
+    zVal.textContent = `${zIn.value}x`;
+    bVal.textContent = `${Math.round(bIn.value * 100)}%`;
+    cVal.textContent = `${Math.round(cIn.value * 100)}%`;
+  };
+
+  zIn.oninput = updateFilters; bIn.oninput = updateFilters; cIn.oninput = updateFilters;
+  applyState();
 }
 
-function closePanels(){
-  document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
-}
+window.onload = async () => {
+  // Cargar valores guardados de API y WhatsApp si existen
+  if(localStorage.getItem('aurum_apikey')) document.getElementById('apiKeyInput').value = localStorage.getItem('aurum_apikey');
+  if(localStorage.getItem('aurum_whatsapp')) document.getElementById('whatsappInput').value = localStorage.getItem('aurum_whatsapp');
 
-function toggleSubPanel(e, panelId){
-  e.stopPropagation();
-  const panel = document.getElementById(panelId);
-  const isActive = panel.classList.contains('active');
-  closePanels();
-  if(!isActive) panel.classList.add('active');
-}
+  for(let i=1; i<=TOTAL_TRAPS; i++){
+    const wifiBadge = document.getElementById(`wifi${i}`);
+    const img = document.getElementById(`img${i}`);
+    const noSig = document.getElementById(`nosig${i}`);
 
-function openLive(id){
-  const img = document.getElementById(`img${id}`);
-  const nosig = document.getElementById(`nosig${id}`);
-  img.src = "https://picsum.photos/600/340?random=" + id;
-  img.style.display = 'block';
-  nosig.style.display = 'none';
-}
+    try {
+      const state = await getTrapState(i);
+      if(state) {
+        wifiBadge.innerHTML = rssiToBars(state.wifi || -90);
+        if(state.lastCapture === "OK" && state.lastImage){
+          img.src = state.lastImage;
+          img.style.display = 'block';
+          noSig.style.display = 'none';
+        }
+      }
+    } catch(e) {}
+  }
+};
 </script>
 </body>
 </html>
+
+```
