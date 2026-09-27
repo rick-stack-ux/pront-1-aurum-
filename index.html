@@ -45,6 +45,7 @@ header {
   border-radius: 16px;
   box-shadow: 0 4px 30px rgba(0,0,0,0.8);
   width: max-content;
+  max-width: 100%;
   margin-left: auto;
   margin-right: auto;
 }
@@ -56,10 +57,9 @@ header {
 }
 
 .brand img.logo {
-  width: 65px; /* Ligeramente más grande para compensar el recorte */
+  width: 65px;
   height: 65px;
   object-fit: cover;
-  /* El 38% recorta hacia adentro, eliminando por completo el anillo de colores original */
   clip-path: circle(38% at 50% 50%); 
 }
 
@@ -75,10 +75,11 @@ header {
   color: var(--text-muted);
 }
 
-/* ================= GRID & CARDS ================= */
+/* ================= RESPONSIVE GRID & CARDS ================= */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  /* Reducido a 280px para que encaje mejor en pantallas de celulares verticales */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 25px;
 }
 
@@ -112,6 +113,8 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap; /* Permite que los badges bajen si la pantalla es muy estrecha */
+  gap: 10px;
 }
 
 .card-title {
@@ -125,6 +128,7 @@ header {
 .telemetry-badges {
   display: flex;
   gap: 8px;
+  align-items: center;
 }
 
 .badge {
@@ -335,6 +339,15 @@ input[type=range]::-webkit-slider-runnable-track {
   color: var(--text-muted);
   margin-top: 5px;
 }
+
+/* ================= MEDIA QUERIES PARA MÓVILES ================= */
+@media (max-width: 480px) {
+  body { padding: 10px; }
+  .brand h1 { font-size: 1.2rem; }
+  .brand img.logo { width: 50px; height: 50px; }
+  .btn { font-size: 0.75rem; padding: 10px 8px; }
+  .card { padding: 15px; }
+}
 </style>
 </head>
 <body>
@@ -465,6 +478,8 @@ for(let i=1; i<=TOTAL_TRAPS; i++){
     <div class="action-grid">
       <button class="btn" id="cam${i}"><i class="fa-solid fa-satellite-dish"></i> Cámara en vivo</button>
       <button class="btn" id="set${i}"><i class="fa-solid fa-sliders"></i> Calibración</button>
+      <button class="btn" id="save${i}"><i class="fa-solid fa-camera"></i> Guardar captura</button>
+      <button class="btn" id="loc${i}"><i class="fa-solid fa-map-location-dot"></i> Ubicación</button>
     </div>
 
     <div class="settings-panel" id="settings${i}">
@@ -489,6 +504,9 @@ for(let i=1; i<=TOTAL_TRAPS; i++){
   const toggle = card.querySelector(`#toggle${i}`);
   const camBtn = card.querySelector(`#cam${i}`);
   const setBtn = card.querySelector(`#set${i}`);
+  const saveBtn = card.querySelector(`#save${i}`);
+  const locBtn = card.querySelector(`#loc${i}`);
+  
   const container = card.querySelector(`#container${i}`);
   const img = card.querySelector(`#img${i}`);
   const settings = card.querySelector(`#settings${i}`);
@@ -497,7 +515,6 @@ for(let i=1; i<=TOTAL_TRAPS; i++){
   const zIn = card.querySelector(`#z${i}`), bIn = card.querySelector(`#b${i}`), cIn = card.querySelector(`#c${i}`);
   const zVal = card.querySelector(`#z-val${i}`), bVal = card.querySelector(`#b-val${i}`), cVal = card.querySelector(`#c-val${i}`);
 
-  // Evento para mostrar la red al hacer clic en WiFi
   wifiBtn.onclick = async () => {
     try {
       const state = await getTrapState(i);
@@ -508,6 +525,16 @@ for(let i=1; i<=TOTAL_TRAPS; i++){
     }
   };
 
+  saveBtn.onclick = () => {
+    alert(`Guardando captura de la Trampa ${i}...`);
+    // Aquí puedes agregar la lógica para guardar la imagen (por ejemplo, descargar img.src o enviarlo a Firebase)
+  };
+
+  locBtn.onclick = () => {
+    alert(`Mostrando ubicación de la Trampa ${i}:\n${loc}`);
+    // Aquí puedes agregar la lógica para abrir Google Maps con las coordenadas
+  };
+
   setInterval(() => { timeLabel.textContent = nowString(); }, 1000);
 
   function applyState(){
@@ -515,6 +542,7 @@ for(let i=1; i<=TOTAL_TRAPS; i++){
     setEnabled(i, en);
     card.classList.toggle("disabled", !en);
     camBtn.disabled = !en || i !== 1;
+    saveBtn.disabled = !en;
   }
 
   toggle.addEventListener('change', () => {
@@ -558,5 +586,3 @@ window.onload = async () => {
 </script>
 </body>
 </html>
-
-```
