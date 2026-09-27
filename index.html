@@ -2,17 +2,16 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Aurumsys | Sistema Avanzado de Monitoreo</title>
+<title>Aurumsys | Vision</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
 :root {
-  /* Paleta Extraída del Logo Aurumsys */
-  --bg-app: #080808; /* Negro profundo como el fondo del logo */
+  --bg-app: #080808; 
   --bg-card: #121212; 
   --bg-card-hover: #1a1a1a;
-  --accent: #FFEA00; /* Amarillo eléctrico de los circuitos */
+  --accent: #FFEA00; 
   --accent-glow: rgba(255, 234, 0, 0.2);
   --text-main: #ffffff;
   --text-muted: #888888;
@@ -36,15 +35,18 @@ body {
 /* ================= HEADER ================= */
 header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center; /* Centra el contenido y quita el espacio extenso */
   align-items: center;
   margin-bottom: 30px;
-  padding: 12px 25px;
+  padding: 12px 30px;
   background: rgba(18, 18, 18, 0.8);
   backdrop-filter: blur(10px);
   border: 1px solid var(--border);
   border-radius: 16px;
   box-shadow: 0 4px 30px rgba(0,0,0,0.8);
+  width: max-content;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .brand {
@@ -53,14 +55,13 @@ header {
   gap: 15px;
 }
 
-/* Máscara CSS para recortar el anillo del logo */
 .brand img.logo {
   width: 55px;
   height: 55px;
   object-fit: cover;
   border-radius: 50%;
-  clip-path: circle(43% at 50% 50%); /* El 43% oculta el anillo exterior */
-  border: 2px solid var(--accent); /* Nuevo borde sólido color amarillo */
+  clip-path: circle(43% at 50% 50%); 
+  border: 2px solid var(--accent); 
   box-shadow: 0 0 10px var(--accent-glow);
 }
 
@@ -74,19 +75,6 @@ header {
 .brand h1 span {
   font-weight: 300;
   color: var(--text-muted);
-}
-
-.system-status {
-  font-size: 0.85rem;
-  color: var(--success);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 600;
-  background: rgba(16, 185, 129, 0.1);
-  padding: 6px 12px;
-  border-radius: 20px;
-  border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 /* ================= GRID & CARDS ================= */
@@ -356,12 +344,8 @@ input[type=range]::-webkit-slider-runnable-track {
 
 <header>
   <div class="brand">
-    <!-- Aquí llamamos al logo que subiste -->
-    <img src="image_ec08dd.png" class="logo" alt="Logo Aurumsys">
-    <h1>Aurumsys <span>| IoT Vision</span></h1>
-  </div>
-  <div class="system-status">
-    <i class="fa-solid fa-circle-check"></i> Sistema en línea
+    <img src="image_ec08dd.png" class="logo" alt="Logo Aurum">
+    <h1>Aurumsys <span>| VISION</span></h1>
   </div>
 </header>
 
@@ -453,11 +437,11 @@ for(let i=1; i<=TOTAL_TRAPS; i++){
   card.innerHTML = `
     <div class="card-header">
       <div class="card-title">
-        <i class="fa-solid fa-microchip"></i> Nodo ${i}
+        <i class="fa-solid fa-microchip"></i> Trampa ${i}
       </div>
       <div class="telemetry-badges">
         <span class="badge battery" id="batt${i}"><i class="fa-solid fa-battery-full"></i> ${mockBattery}%</span>
-        <span class="badge wifi" id="wifi${i}"><i class="fa-solid fa-wifi"></i> --</span>
+        <span class="badge wifi" id="wifi${i}" title="Ver red actual"><i class="fa-solid fa-wifi"></i> --</span>
         <div class="switch-container">
           <label class="switch">
             <input type="checkbox" id="toggle${i}" ${isEn ? 'checked' : ''}>
@@ -512,8 +496,20 @@ for(let i=1; i<=TOTAL_TRAPS; i++){
   const img = card.querySelector(`#img${i}`);
   const settings = card.querySelector(`#settings${i}`);
   const timeLabel = card.querySelector(`#time${i}`);
+  const wifiBtn = card.querySelector(`#wifi${i}`);
   const zIn = card.querySelector(`#z${i}`), bIn = card.querySelector(`#b${i}`), cIn = card.querySelector(`#c${i}`);
   const zVal = card.querySelector(`#z-val${i}`), bVal = card.querySelector(`#b-val${i}`), cVal = card.querySelector(`#c-val${i}`);
+
+  // Evento para mostrar la red al hacer clic en WiFi
+  wifiBtn.onclick = async () => {
+    try {
+      const state = await getTrapState(i);
+      const ssid = (state && state.ssid) ? state.ssid : "Aurumsys_Net (Red Local)";
+      alert(`Trampa ${i} conectada a la red:\n${ssid}`);
+    } catch(e) {
+      alert(`Trampa ${i}\nEstado de red no disponible.`);
+    }
+  };
 
   setInterval(() => { timeLabel.textContent = nowString(); }, 1000);
 
