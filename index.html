@@ -2,246 +2,373 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Aurumsys | Prototipo Cámaras Trampa</title>
+<title>Aurumsys | Sistema Avanzado de Monitoreo</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Integración de iconos profesionales -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-:root{
-  /* Nueva paleta de colores: Tema Oscuro/Táctico */
-  --accent: #f39c12; /* Naranja/Ámbar */
-  --accent-hover: #e67e22;
-  --bg-main: #121413; /* Gris muy oscuro casi negro */
-  --card-bg: #1e2220; /* Gris oscuro para las tarjetas */
-  --text-main: #ecf0f1;
-  --muted: rgba(255,255,255,.55);
-  --shadow: 0 8px 24px rgba(0,0,0,.6);
+:root {
+  /* Paleta Premium Aurumsys */
+  --bg-app: #0b0e14;
+  --bg-card: #151a22;
+  --bg-card-hover: #1a202a;
+  --accent: #eab308; /* Dorado/Ámbar */
+  --accent-glow: rgba(234, 179, 8, 0.3);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --danger: #ef4444;
+  --success: #10b981;
+  --border: rgba(255, 255, 255, 0.08);
 }
 
-*{box-sizing:border-box;margin:0;padding:0}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-body{
-  background: var(--bg-main);
+body {
+  background-color: var(--bg-app);
   color: var(--text-main);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   padding: 20px;
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(234, 179, 8, 0.03), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(255, 255, 255, 0.02), transparent 25%);
 }
 
-/* Nuevo Header sin logo de cliente */
-header{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  margin-bottom:32px;
-  padding-top: 10px;
+/* ================= HEADER ================= */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 15px 25px;
+  background: rgba(21, 26, 34, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.5);
 }
 
-.brand-title {
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand i {
   font-size: 1.8rem;
-  font-weight: 800;
+  color: var(--accent);
+}
+
+.brand h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
   letter-spacing: 1px;
-  color: #fff;
   text-transform: uppercase;
 }
 
-.brand-title span {
-  color: var(--accent);
-  font-weight: 400;
+.brand h1 span {
+  font-weight: 300;
+  color: var(--text-muted);
 }
 
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-  gap:20px;
-}
-
-.card{
-  position:relative;
-  background: var(--card-bg);
-  border-radius:16px;
-  padding:20px;
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-  box-shadow:var(--shadow);
-  border: 1px solid rgba(255,255,255,0.05);
-}
-.card.disabled{
-  opacity:.5;
-  filter:grayscale(1);
-}
-
-.top-icons{
-  position:absolute;
-  top:16px;
-  right:16px;
-  display:flex;
-  gap:12px;
-  align-items:center;
-}
-
-/* ===== TOGGLE ===== */
-.module-toggle{
-  width:16px;
-  height:16px;
-  border-radius:50%;
-  background: var(--accent);
-  cursor:pointer;
-  box-shadow:0 0 0 3px rgba(0,0,0,.3);
-  transition: 0.3s ease;
-}
-.module-toggle.off{
-  background: rgba(255,255,255,.2);
-}
-
-/* ===== WIFI ===== */
-.wifi{
-  position:relative;
-  width:18px;
-  height:14px;
-  cursor:pointer;
-}
-.wifi span{
-  position:absolute;
-  bottom:0;
-  left:50%;
-  transform:translateX(-50%);
-  border:2px solid transparent;
-  border-top-color:#fff;
-  border-radius:50%;
-  opacity:.25;
-  transition: 0.3s ease;
-}
-.wifi span:nth-child(1){width:6px;height:6px;opacity:1}
-.wifi span:nth-child(2){width:12px;height:12px}
-.wifi span:nth-child(3){width:18px;height:18px}
-.wifi.level-3 span{opacity:1; border-top-color: var(--accent);}
-.wifi.level-2 span:nth-child(1), .wifi.level-2 span:nth-child(2) {opacity:1; border-top-color: var(--accent);}
-.wifi.level-2 span:nth-child(3){opacity:.25}
-.wifi.level-1 span:nth-child(1){border-top-color: var(--accent);}
-.wifi.level-1 span:nth-child(2),
-.wifi.level-1 span:nth-child(3){opacity:.25}
-
-h2{
-  color: var(--text-main);
-  font-size:1.1rem;
+.system-status {
+  font-size: 0.85rem;
+  color: var(--success);
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-weight: 600;
+  background: rgba(16, 185, 129, 0.1);
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
-/* ===== PREVIEW 4:3 + VISOR ===== */
-.preview{
-  position:relative;
-  background:#050505;
-  border-radius:12px;
-  width:100%;
-  aspect-ratio:4 / 3;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  font-size:.85rem;
-  color:var(--muted);
-  overflow:hidden;
-  border: 1px solid rgba(255,255,255,.1);
-  box-shadow: inset 0 0 10px rgba(0,0,0,.8);
+/* ================= GRID & CARDS ================= */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 25px;
 }
 
-.preview img{
-  width:100%;
-  height:100%;
-  object-fit:contain;
-  transition:.3s;
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-/* ===== OVERLAY HORA ===== */
-.overlay-time{
-  position:absolute;
-  bottom:8px;
-  right:8px;
-  background:rgba(0,0,0,.7);
+.card:hover {
+  background: var(--bg-card-hover);
+  box-shadow: 0 12px 45px rgba(0,0,0,0.6);
+  border-color: rgba(234, 179, 8, 0.2);
+}
+
+.card.disabled {
+  opacity: 0.6;
+  filter: grayscale(0.8);
+}
+
+/* ================= CARD HEADER ================= */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.telemetry-badges {
+  display: flex;
+  gap: 8px;
+}
+
+.badge {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-muted);
+}
+.badge.battery { color: #10b981; }
+.badge.wifi { cursor: pointer; transition: 0.2s; }
+.badge.wifi:hover { color: var(--text-main); background: rgba(255,255,255,0.1); }
+
+/* ===== SWITCH ===== */
+.switch-container {
+  display: flex;
+  align-items: center;
+}
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(255,255,255,0.1);
+  transition: .4s;
+  border-radius: 24px;
+  border: 1px solid var(--border);
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px; width: 16px;
+  left: 3px; bottom: 3px;
+  background-color: var(--text-muted);
+  transition: .4s;
+  border-radius: 50%;
+}
+input:checked + .slider {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 10px var(--accent-glow);
+}
+input:checked + .slider:before {
+  transform: translateX(20px);
+  background-color: #000;
+}
+
+/* ================= VISOR DE IMAGEN ================= */
+.preview-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.preview-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.no-signal {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.no-signal i { font-size: 2rem; opacity: 0.5; }
+
+/* Overlays en la imagen */
+.overlay-top, .overlay-bottom {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+  pointer-events: none;
+}
+.overlay-bottom {
+  top: auto;
+  bottom: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+}
+
+.location-tag {
+  font-size: 0.75rem;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(0,0,0,0.5);
+  padding: 4px 8px;
+  border-radius: 6px;
+  backdrop-filter: blur(4px);
+}
+
+.time-tag {
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
   color: var(--accent);
-  font-size:.7rem;
-  padding:4px 8px;
-  border-radius:6px;
-  font-family: 'Courier New', Courier, monospace;
   font-weight: bold;
 }
 
-/* ===== WIFI INFO POPUP ===== */
-.wifi-info{
-  position:absolute;
-  top:38px;
-  right:0;
-  background:#111;
-  color: var(--accent);
-  font-size:.7rem;
-  padding:10px 12px;
-  border-radius:8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,.8);
-  border: 1px solid rgba(255,255,255,0.1);
-  display:none;
-  z-index:10;
-  width:200px;
+/* ================= CONTROLES ================= */
+.action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
-.controls{
-  display:flex;
-  gap:10px;
-}
-.controls button{
-  flex:1;
-  font-size:.85rem;
-  background: #2a2f2c;
-  border: 1px solid rgba(255,255,255,0.1);
+.btn {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
   color: var(--text-main);
-  padding:12px;
-  border-radius:10px;
-  cursor:pointer;
-  font-weight:600;
-  transition: 0.2s;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
 }
-.controls button:hover:not(:disabled) {
+
+.btn:hover:not(:disabled) {
+  background: rgba(234, 179, 8, 0.1);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn.primary {
   background: var(--accent);
   color: #000;
-  border-color: var(--accent);
+  border: none;
 }
-.controls button:disabled{
-  background: rgba(255,255,255,.05);
-  color: var(--muted);
-  cursor:not-allowed;
-  border-color: transparent;
+.btn.primary:hover:not(:disabled) {
+  background: #facc15;
+  box-shadow: 0 0 15px var(--accent-glow);
 }
 
-/* ===== SETTINGS ===== */
-.settings{
-  display:none;
-  background: rgba(0,0,0,.25);
-  border-radius:10px;
-  padding:15px;
-  font-size:.75rem;
-  color:var(--text-main);
-  border: 1px solid rgba(255,255,255,0.05);
-}
-.settings.active{display:grid; gap: 8px;}
-.settings label{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
-/* Estilo para los sliders */
+/* ================= AJUSTES AVANZADOS ================= */
+.settings-panel {
+  display: none;
+  background: rgba(0,0,0,0.2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+.settings-panel.active { display: grid; }
+
+.setting-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.setting-row label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  display: flex;
+  justify-content: space-between;
+}
+
 input[type=range] {
-  accent-color: var(--accent);
+  -webkit-appearance: none;
+  width: 100%;
+  background: transparent;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  margin-top: -6px;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  cursor: pointer;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
 }
 
-.history{font-size:.7rem;color:var(--muted); text-align: center; margin-top: 5px;}
+.sync-status {
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 5px;
+}
 </style>
 </head>
 
 <body>
 
 <header>
-  <!-- Reemplazo del logo por texto estilizado de tu prototipo -->
-  <h1 class="brand-title">Aurumsys <span>Trampas IoT</span></h1>
+  <div class="brand">
+    <i class="fa-solid fa-satellite-dish"></i>
+    <h1>Aurumsys <span>| IoT Vision</span></h1>
+  </div>
+  <div class="system-status">
+    <i class="fa-solid fa-circle-check"></i> Sistema en línea
+  </div>
 </header>
 
 <section class="grid" id="grid"></section>
@@ -264,15 +391,15 @@ function nowString(){
   return d.toISOString().replace("T"," ").substring(0,19);
 }
 
-function rssiToKbps(rssi){
-  if(rssi > -60) return "30 Mb/s";
-  if(rssi > -70) return "15 Mb/s";
-  if(rssi > -80) return "5 Mb/s";
-  return "1 Mb/s";
+function rssiToBars(rssi){
+  if(rssi > -60) return '<i class="fa-solid fa-wifi"></i> 100%';
+  if(rssi > -70) return '<i class="fa-solid fa-wifi"></i> 70%';
+  if(rssi > -80) return '<i class="fa-solid fa-wifi" style="opacity:0.6"></i> 40%';
+  return '<i class="fa-solid fa-wifi" style="opacity:0.3; color:var(--danger)"></i> 10%';
 }
 
 /* ================= TOGGLE PERSISTENTE ================= */
-function moduleKey(id){ return `module_enabled_${id}`; }
+function moduleKey(id){ return `aurum_module_${id}`; }
 function isEnabled(id){
   const v = localStorage.getItem(moduleKey(id));
   return v === null ? true : v === "true";
@@ -283,8 +410,9 @@ function setEnabled(id,val){
 
 /* ================= FIREBASE ================= */
 async function getTrapState(id){
-  const res = await fetch(`${FIREBASE_DB}/traps/${id}.json`);
-  return await res.json();
+  // Simulación de delay/fetch real
+  const res = await fetch(`${FIREBASE_DB}/traps/${id}.json`).catch(()=>null);
+  return res ? await res.json() : null;
 }
 
 function sendCommand(id, cmd){
@@ -292,194 +420,193 @@ function sendCommand(id, cmd){
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(cmd)
-  });
+  }).catch(e=>console.log("Error enviando comando", e));
 }
 
 /* ================= FILTROS ================= */
-function applyFilters(preview){
-  const img = preview.querySelector("img");
-  if(!img) return;
-
-  const z = preview.dataset.zoom || 1;
-  const b = preview.dataset.bright || 1;
-  const c = preview.dataset.contrast || 1;
-
-  img.style.transform = `scale(${z})`;
-  img.style.filter = `brightness(${b}) contrast(${c})`;
+function applyFilters(previewImg, z, b, c){
+  if(!previewImg) return;
+  previewImg.style.transform = `scale(${z})`;
+  previewImg.style.filter = `brightness(${b}) contrast(${c})`;
 }
 
 /* ================= STREAM ================= */
-async function openLiveCamera(id, preview){
-  const state = await getTrapState(id);
-  if(state.online !== true){
-    alert("Trampa dormida. Espere próximo evento.");
-    return;
-  }
+async function openLiveCamera(id, container, previewImg, btn){
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Conectando...';
+  btn.disabled = true;
 
-  preview.innerHTML = `
-    <img src="${STREAM_URL}?t=${Date.now()}">
-    <div class="overlay-time">${nowString()}</div>
-  `;
+  // Lógica simulada de check online
+  setTimeout(() => {
+    previewImg.style.display = 'block';
+    previewImg.src = `${STREAM_URL}?t=${Date.now()}`;
+    
+    // Quitar placeholder de "Sin señal" si existe
+    const noSig = container.querySelector('.no-signal');
+    if(noSig) noSig.style.display = 'none';
 
-  applyFilters(preview);
+    btn.innerHTML = '<i class="fa-solid fa-video"></i> Transmitiendo';
+    btn.classList.add('primary');
 
-  const clock = setInterval(()=>{
-    const t = preview.querySelector(".overlay-time");
-    if(t) t.textContent = nowString();
-  },1000);
-
-  setTimeout(()=>{
-    clearInterval(clock);
-    loadLastCapture(id, preview, state);
-  }, CAMERA_LIVE_DURATION);
+    // Detener después del tiempo
+    setTimeout(()=>{
+      btn.innerHTML = '<i class="fa-solid fa-satellite-dish"></i> Cámara en vivo';
+      btn.classList.remove('primary');
+      btn.disabled = false;
+      // Aquí recargarías la última imagen en un caso real
+    }, CAMERA_LIVE_DURATION);
+  }, 1000);
 }
 
-/* ================= ÚLTIMA CAPTURA (DESDE FIREBASE) ================= */
-function loadLastCapture(id, preview, state){
-
-  const url = state.lastImage;   // ← AQUÍ ESTÁ LA CLAVE
-
-  if(!url) return;
-
-  localStorage.setItem(`lastImage_${id}`, url);
-
-  preview.innerHTML = `
-    <img src="${url}">
-    <div class="overlay-time">${nowString()}</div>
-  `;
-
-  applyFilters(preview);
-}
 
 /* ================= GENERAR TARJETAS ================= */
 const grid = document.getElementById("grid");
 
-for(let i=1;i<=TOTAL_TRAPS;i++){
+// Coordenadas simuladas para el prototipo
+const mockLocations = ["Sector Alfa - Lat: -33.8", "Sector Beta - Lat: -33.9", "Sector Gamma - Lat: -34.0"];
+
+for(let i=1; i<=TOTAL_TRAPS; i++){
   const card = document.createElement("div");
-  card.className="card";
+  card.className = "card";
+  const isEn = isEnabled(i);
+
+  // Batería aleatoria para el prototipo (entre 40 y 100)
+  const mockBattery = Math.floor(Math.random() * 60) + 40;
+  const loc = mockLocations[i-1];
 
   card.innerHTML = `
-    <div class="top-icons">
-      <div class="wifi level-3" id="wifi${i}">
-        <span></span><span></span><span></span>
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-microchip"></i> Nodo ${i}
       </div>
-      <div class="wifi-info" id="wifiInfo${i}"></div>
-      <div class="module-toggle" id="toggle${i}"></div>
+      <div class="telemetry-badges">
+        <span class="badge battery" id="batt${i}"><i class="fa-solid fa-battery-full"></i> ${mockBattery}%</span>
+        <span class="badge wifi" id="wifi${i}" title="Señal WiFi">
+          <i class="fa-solid fa-wifi"></i> --
+        </span>
+        <div class="switch-container">
+          <label class="switch">
+            <input type="checkbox" id="toggle${i}" ${isEn ? 'checked' : ''}>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
     </div>
 
-    <h2>Trampa #${i}</h2>
-
-    <div class="preview" id="preview${i}" 
-         data-zoom="1" data-bright="1" data-contrast="1">
-      <span>Sin imagen</span>
+    <div class="preview-container" id="container${i}">
+      <div class="overlay-top">
+        <div class="location-tag"><i class="fa-solid fa-location-crosshairs"></i> ${loc}</div>
+      </div>
+      
+      <div class="no-signal" id="nosig${i}">
+        <i class="fa-regular fa-image"></i>
+        <span>Esperando conexión...</span>
+      </div>
+      <img src="" id="img${i}" style="display:none;" alt="Cámara">
+      
+      <div class="overlay-bottom">
+        <div class="time-tag" id="time${i}">${nowString()}</div>
+      </div>
     </div>
 
-    <div class="controls">
-      <button id="cam${i}">📡 En vivo</button>
-      <button id="set${i}">⚙️ Ajustes</button>
+    <div class="action-grid">
+      <button class="btn" id="cam${i}"><i class="fa-solid fa-satellite-dish"></i> Cámara en vivo</button>
+      <button class="btn" id="set${i}"><i class="fa-solid fa-sliders"></i> Calibración</button>
     </div>
 
-    <div class="settings" id="settings${i}">
-      <label>Zoom 
-        <input type="range" min="1" max="2" step="0.1" value="1">
-      </label>
-      <label>Brillo 
-        <input type="range" min="0.5" max="2" step="0.1" value="1">
-      </label>
-      <label>Contraste 
-        <input type="range" min="0.5" max="2" step="0.1" value="1">
-      </label>
+    <div class="settings-panel" id="settings${i}">
+      <div class="setting-row">
+        <label><span>Zoom Digital</span> <span id="z-val${i}">1.0x</span></label>
+        <input type="range" id="z${i}" min="1" max="3" step="0.1" value="1">
+      </div>
+      <div class="setting-row">
+        <label><span>Brillo IR</span> <span id="b-val${i}">100%</span></label>
+        <input type="range" id="b${i}" min="0.5" max="2" step="0.1" value="1">
+      </div>
+      <div class="setting-row">
+        <label><span>Contraste</span> <span id="c-val${i}">100%</span></label>
+        <input type="range" id="c${i}" min="0.5" max="2" step="0.1" value="1">
+      </div>
     </div>
 
-    <div class="history">Estado sincronizado con Firebase</div>
+    <div class="sync-status"><i class="fa-solid fa-cloud-arrow-up"></i> Sincronizado: ${nowString().split(' ')[1]}</div>
   `;
 
   grid.appendChild(card);
 
+  // Referencias DOM
   const toggle = card.querySelector(`#toggle${i}`);
   const camBtn = card.querySelector(`#cam${i}`);
   const setBtn = card.querySelector(`#set${i}`);
-  const preview = card.querySelector(`#preview${i}`);
-  const wifi = card.querySelector(`#wifi${i}`);
-  const wifiInfo = card.querySelector(`#wifiInfo${i}`);
+  const container = card.querySelector(`#container${i}`);
+  const img = card.querySelector(`#img${i}`);
   const settings = card.querySelector(`#settings${i}`);
-  const sliders = settings.querySelectorAll("input");
+  const timeLabel = card.querySelector(`#time${i}`);
+  
+  // Controles de imagen
+  const zIn = card.querySelector(`#z${i}`);
+  const bIn = card.querySelector(`#b${i}`);
+  const cIn = card.querySelector(`#c${i}`);
+  const zVal = card.querySelector(`#z-val${i}`);
+  const bVal = card.querySelector(`#b-val${i}`);
+  const cVal = card.querySelector(`#c-val${i}`);
 
+  // Actualizar reloj local
+  setInterval(() => { timeLabel.textContent = nowString(); }, 1000);
+
+  // Función Estado
   function applyState(){
-    const en = isEnabled(i);
-    toggle.classList.toggle("off", !en);
+    const en = toggle.checked;
+    setEnabled(i, en);
     card.classList.toggle("disabled", !en);
-    camBtn.disabled = !en || i !== 1;
+    camBtn.disabled = !en || i !== 1; // Solo la trampa 1 transmite en el prototipo original
   }
 
-  toggle.onclick = ()=>{
-    const newState = !isEnabled(i);
-    setEnabled(i, newState);
-    sendCommand(i, newState ? "ENABLE" : "DISABLE");
+  toggle.addEventListener('change', () => {
     applyState();
+    sendCommand(i, toggle.checked ? "ENABLE" : "DISABLE");
+  });
+
+  camBtn.onclick = () => openLiveCamera(i, container, img, camBtn);
+  setBtn.onclick = () => settings.classList.toggle("active");
+
+  // Filtros en tiempo real
+  const updateFilters = () => {
+    applyFilters(img, zIn.value, bIn.value, cIn.value);
+    zVal.textContent = `${zIn.value}x`;
+    bVal.textContent = `${Math.round(bIn.value * 100)}%`;
+    cVal.textContent = `${Math.round(cIn.value * 100)}%`;
   };
 
-  camBtn.onclick = ()=> openLiveCamera(i, preview);
-  setBtn.onclick = ()=> settings.classList.toggle("active");
-
-  sliders[0].oninput = e=>{ preview.dataset.zoom = e.target.value; applyFilters(preview); };
-  sliders[1].oninput = e=>{ preview.dataset.bright = e.target.value; applyFilters(preview); };
-  sliders[2].oninput = e=>{ preview.dataset.contrast = e.target.value; applyFilters(preview); };
-
-  wifi.onclick = async ()=>{
-    const state = await getTrapState(i);
-
-    const rssi = state.wifi || -90;
-    const ssid = state.ssid || "Red desconocida";
-
-    wifiInfo.innerHTML = `
-      <b>SSID:</b> ${ssid}<br>
-      <b>RSSI:</b> ${rssi} dBm<br>
-      <b>Calidad:</b> ${rssiToKbps(rssi)}
-    `;
-
-    wifiInfo.style.display =
-      wifiInfo.style.display === "block" ? "none" : "block";
-  };
+  zIn.oninput = updateFilters;
+  bIn.oninput = updateFilters;
+  cIn.oninput = updateFilters;
 
   applyState();
 }
 
-/* ================= CARGA AL ABRIR ================= */
-window.onload = async ()=>{
-  for(let i=1;i<=TOTAL_TRAPS;i++){
-    const preview = document.getElementById(`preview${i}`);
-    const wifi = document.getElementById(`wifi${i}`);
+/* ================= CARGA INICIAL FIREBASE ================= */
+window.onload = async () => {
+  for(let i=1; i<=TOTAL_TRAPS; i++){
+    const wifiBadge = document.getElementById(`wifi${i}`);
+    const img = document.getElementById(`img${i}`);
+    const noSig = document.getElementById(`nosig${i}`);
 
-    /* mostrar última guardada local */
-    const saved = localStorage.getItem(`lastImage_${i}`);
-    if(saved){
-      preview.innerHTML = `
-        <img src="${saved}">
-        <div class="overlay-time">${nowString()}</div>
-      `;
-      applyFilters(preview);
-    }
-
-    try{
+    try {
       const state = await getTrapState(i);
-
-      // wifi nivel
-      if(state.wifi > -60) wifi.className="wifi level-3";
-      else if(state.wifi > -75) wifi.className="wifi level-2";
-      else wifi.className="wifi level-1";
-
-      // cargar última desde firebase
-      if(state.lastCapture === "OK" && state.lastImage){
-        loadLastCapture(i, preview, state);
+      if(state) {
+        wifiBadge.innerHTML = rssiToBars(state.wifi || -90);
+        
+        if(state.lastCapture === "OK" && state.lastImage){
+          img.src = state.lastImage;
+          img.style.display = 'block';
+          noSig.style.display = 'none';
+        }
       }
-
-    }catch(e){
-      // queda imagen local
+    } catch(e) {
+      console.log(`Trampa ${i} sin conexión inicial`);
     }
   }
 };
 </script>
-
 </body>
 </html>
