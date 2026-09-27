@@ -1,3 +1,10 @@
+Como no puedo descargar, editar y volver a subir tu archivo de imagen directamente, he ajustado el código CSS para aplicar un recorte (`clip-path`) más profundo. Esto ocultará por completo el anillo con el degradado de colores del archivo original `logo.png` directamente desde el navegador.
+
+También eliminé el borde amarillo que había agregado en la versión anterior para que no veas ningún tipo de anillo, y corregí el nombre del archivo en el HTML a `logo.png` para que cargue correctamente.
+
+Reemplaza tu código con esta versión final:
+
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -35,7 +42,7 @@ body {
 /* ================= HEADER ================= */
 header {
   display: flex;
-  justify-content: center; /* Centra el contenido y quita el espacio extenso */
+  justify-content: center;
   align-items: center;
   margin-bottom: 30px;
   padding: 12px 30px;
@@ -56,13 +63,11 @@ header {
 }
 
 .brand img.logo {
-  width: 55px;
-  height: 55px;
+  width: 65px; /* Ligeramente más grande para compensar el recorte */
+  height: 65px;
   object-fit: cover;
-  border-radius: 50%;
-  clip-path: circle(43% at 50% 50%); 
-  border: 2px solid var(--accent); 
-  box-shadow: 0 0 10px var(--accent-glow);
+  /* El 38% recorta hacia adentro, eliminando por completo el anillo de colores original */
+  clip-path: circle(38% at 50% 50%); 
 }
 
 .brand h1 {
@@ -339,12 +344,11 @@ input[type=range]::-webkit-slider-runnable-track {
 }
 </style>
 </head>
-
 <body>
 
 <header>
   <div class="brand">
-    <img src="image_ec08dd.png" class="logo" alt="Logo Aurum">
+    <img src="logo.png" class="logo" alt="Logo Aurum">
     <h1>Aurumsys <span>| VISION</span></h1>
   </div>
 </header>
@@ -561,3 +565,5 @@ window.onload = async () => {
 </script>
 </body>
 </html>
+
+```
