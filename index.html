@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <title>Aurumsys | Vision</title>
@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-:root {
+:root[data-theme="dark"] {
   --bg-app: #080808; 
   --bg-card: #121212; 
   --bg-card-hover: #1a1a1a;
@@ -18,6 +18,21 @@
   --danger: #ef4444;
   --success: #10b981;
   --border: rgba(255, 255, 255, 0.08);
+  --panel-bg: rgba(18, 18, 18, 0.95);
+}
+
+:root[data-theme="light"] {
+  --bg-app: #f4f4f6; 
+  --bg-card: #ffffff; 
+  --bg-card-hover: #fcfcfc;
+  --accent: #d4b800; 
+  --accent-glow: rgba(212, 184, 0, 0.2);
+  --text-main: #1a1a1a;
+  --text-muted: #666666;
+  --danger: #dc2626;
+  --success: #059669;
+  --border: rgba(0, 0, 0, 0.1);
+  --panel-bg: rgba(255, 255, 255, 0.95);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,9 +42,8 @@ body {
   color: var(--text-main);
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   padding: 20px;
-  background-image: 
-    radial-gradient(circle at 15% 50%, rgba(255, 234, 0, 0.03), transparent 25%),
-    radial-gradient(circle at 85% 30%, rgba(255, 255, 255, 0.02), transparent 25%);
+  min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
 }
 
 /* ================= HEADER ================= */
@@ -39,15 +53,15 @@ header {
   align-items: center;
   margin-bottom: 30px;
   padding: 12px 30px;
-  background: rgba(18, 18, 18, 0.8);
-  backdrop-filter: blur(10px);
+  background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 16px;
-  box-shadow: 0 4px 30px rgba(0,0,0,0.8);
+  box-shadow: 0 4px 30px rgba(0,0,0,0.1);
   width: max-content;
   max-width: 100%;
   margin-left: auto;
   margin-right: auto;
+  position: relative;
 }
 
 .brand {
@@ -57,14 +71,14 @@ header {
 }
 
 .brand img.logo {
-  width: 65px;
-  height: 65px;
+  width: 55px;
+  height: 55px;
   object-fit: cover;
   clip-path: circle(38% at 50% 50%); 
 }
 
 .brand h1 {
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -75,11 +89,39 @@ header {
   color: var(--text-muted);
 }
 
-/* ================= RESPONSIVE GRID & CARDS ================= */
+/* Botón de Engranaje Global */
+.global-settings-btn {
+  position: fixed;
+  top: 25px;
+  right: 25px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  transition: all 0.2s;
+  z-index: 1000;
+}
+.global-settings-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: rotate(45deg);
+}
+
+/* ================= GRID & CARDS ================= */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 25px;
+  max-width: 1300px;
+  margin: 0 auto;
 }
 
 .card {
@@ -90,34 +132,25 @@ header {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
   position: relative;
   overflow: hidden;
-}
-
-.card:hover {
-  background: var(--bg-card-hover);
-  box-shadow: 0 12px 45px rgba(0,0,0,0.8);
-  border-color: rgba(255, 234, 0, 0.2);
+  transition: background 0.3s, border 0.3s;
 }
 
 .card.disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   filter: grayscale(0.8);
 }
 
-/* ================= CARD HEADER ================= */
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
 }
 
 .card-title {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -131,7 +164,7 @@ header {
 }
 
 .badge {
-  background: #000;
+  background: var(--bg-app);
   border: 1px solid var(--border);
   padding: 4px 8px;
   border-radius: 8px;
@@ -143,41 +176,28 @@ header {
 }
 .badge.battery { color: var(--success); }
 .badge.wifi { cursor: pointer; transition: 0.2s; }
-.badge.wifi:hover { color: var(--text-main); background: rgba(255,255,255,0.1); border-color: var(--accent); }
+.badge.wifi:hover { color: var(--text-main); border-color: var(--accent); }
 
-/* ===== SWITCH ===== */
-.switch-container { display: flex; align-items: center; }
-.switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+/* SWITCH */
+.switch { position: relative; display: inline-block; width: 42px; height: 22px; }
 .switch input { opacity: 0; width: 0; height: 0; }
 .slider {
-  position: absolute;
-  cursor: pointer;
+  position: absolute; cursor: pointer;
   top: 0; left: 0; right: 0; bottom: 0;
-  background-color: rgba(255,255,255,0.1);
-  transition: .4s;
-  border-radius: 24px;
-  border: 1px solid var(--border);
+  background-color: var(--border);
+  transition: .3s; border-radius: 22px;
 }
 .slider:before {
-  position: absolute;
-  content: "";
+  position: absolute; content: "";
   height: 16px; width: 16px;
   left: 3px; bottom: 3px;
   background-color: var(--text-muted);
-  transition: .4s;
-  border-radius: 50%;
+  transition: .3s; border-radius: 50%;
 }
-input:checked + .slider {
-  background-color: var(--accent);
-  border-color: var(--accent);
-  box-shadow: 0 0 10px var(--accent-glow);
-}
-input:checked + .slider:before {
-  transform: translateX(20px);
-  background-color: #000;
-}
+input:checked + .slider { background-color: var(--accent); }
+input:checked + .slider:before { transform: translateX(20px); background-color: #000; }
 
-/* ================= VISOR DE IMAGEN ================= */
+/* PREVIEW CAM */
 .preview-container {
   position: relative;
   width: 100%;
@@ -185,518 +205,477 @@ input:checked + .slider:before {
   background: #000;
   border-radius: 12px;
   overflow: hidden;
-  border: 1px solid rgba(255, 234, 0, 0.15);
-  box-shadow: inset 0 0 20px rgba(0,0,0,0.9);
+  border: 1px solid var(--border);
   display: flex;
   justify-content: center;
   align-items: center;
 }
-
-.preview-container img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
+.preview-container img { width: 100%; height: 100%; object-fit: cover; }
 .no-signal {
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
-.no-signal i { font-size: 2rem; opacity: 0.5; }
-
 .overlay-top, .overlay-bottom {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  padding: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+  position: absolute; left: 0; width: 100%; padding: 8px;
+  display: flex; justify-content: space-between; align-items: center;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
   pointer-events: none;
 }
-.overlay-bottom {
-  top: auto;
-  bottom: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-}
-
+.overlay-bottom { top: auto; bottom: 0; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); }
 .location-tag {
-  font-size: 0.75rem;
-  color: var(--text-main);
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  background: rgba(0,0,0,0.6);
-  padding: 4px 8px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  backdrop-filter: blur(4px);
+  font-size: 0.7rem; color: #fff; background: rgba(0,0,0,0.5);
+  padding: 3px 6px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1);
 }
+.time-tag { font-family: monospace; font-size: 0.75rem; color: var(--accent); }
 
-.time-tag {
-  font-family: 'Courier New', monospace;
-  font-size: 0.8rem;
-  color: var(--accent);
-  font-weight: bold;
-}
-
-/* ================= CONTROLES ================= */
-.action-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
+/* BOTONERA */
+.action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .btn {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-app);
   border: 1px solid var(--border);
   color: var(--text-main);
-  padding: 12px;
-  border-radius: 10px;
-  font-size: 0.85rem;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.2s ease;
+  display: flex; justify-content: center; align-items: center; gap: 6px;
+  transition: 0.2s;
 }
+.btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.btn.primary { background: var(--accent); color: #000; border: none; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-.btn:hover:not(:disabled) {
-  background: rgba(255, 234, 0, 0.1);
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.btn.primary {
-  background: var(--accent);
-  color: #000;
-  border: none;
-}
-.btn.primary:hover:not(:disabled) {
-  background: #ffea00;
-  box-shadow: 0 0 15px var(--accent-glow);
-}
-
-.btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-/* ================= SUB-MENÚS / PANELES FLOTANTES ================= */
+/* ================= SUB-MENÚ FLOTANTE CENTRADO EN TARJETA ================= */
 .sub-panel {
   display: none;
-  background: rgba(0,0,0,0.6);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 320px;
+  background: var(--panel-bg);
+  border: 1px solid var(--accent);
+  border-radius: 14px;
   padding: 16px;
   flex-direction: column;
   gap: 12px;
-  backdrop-filter: blur(6px);
-  animation: fadeIn 0.2s ease-in-out;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+  z-index: 50;
+  animation: popIn 0.2s ease-out;
 }
 .sub-panel.active { display: flex; }
 
 .sub-panel-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--accent);
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 8px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.9rem; font-weight: 600; color: var(--accent);
+  border-bottom: 1px solid var(--border); padding-bottom: 8px;
 }
-
-.sub-panel-close {
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  font-size: 1rem;
-  transition: color 0.2s;
-}
+.sub-panel-close { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem; }
 .sub-panel-close:hover { color: var(--text-main); }
+.sub-panel-content { font-size: 0.8rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 6px; }
 
-.sub-panel-content {
-  font-size: 0.85rem;
-  color: var(--text-main);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+/* ================= MODAL GLOBAL DE CONFIGURACIÓN ================= */
+.modal-overlay {
+  display: none;
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
+  justify-content: center; align-items: center; z-index: 2000;
 }
+.modal-overlay.active { display: flex; }
+.modal-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  width: 90%; max-width: 450px;
+  border-radius: 20px; padding: 25px;
+  display: flex; flex-direction: column; gap: 18px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+  animation: popIn 0.3s ease-out;
+}
+.modal-header { display: flex; justify-content: space-between; align-items: center; font-size: 1.2rem; font-weight: 700; color: var(--accent); }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+.form-control {
+  background: var(--bg-app); border: 1px solid var(--border);
+  color: var(--text-main); padding: 10px 12px; border-radius: 8px; font-size: 0.9rem;
+}
+.form-control:focus { outline: none; border-color: var(--accent); }
 
-.sub-panel-content p {
-  color: var(--text-muted);
-  font-size: 0.8rem;
-}
-
-/* Estilos específicos de los paneles */
-.setting-row { display: flex; flex-direction: column; gap: 6px; }
-.setting-row label {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  display: flex;
-  justify-content: space-between;
-}
-
-input[type=range] {
-  -webkit-appearance: none;
-  width: 100%;
-  background: transparent;
-}
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  height: 16px;
-  width: 16px;
-  border-radius: 50%;
-  background: var(--accent);
-  cursor: pointer;
-  margin-top: -6px;
-}
-input[type=range]::-webkit-slider-runnable-track {
-  width: 100%;
-  height: 4px;
-  cursor: pointer;
-  background: rgba(255,255,255,0.1);
-  border-radius: 2px;
-}
-
-.sync-status {
-  text-align: center;
-  font-size: 0.7rem;
-  color: var(--text-muted);
-  margin-top: 5px;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-5px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* ================= MEDIA QUERIES PARA MÓVILES ================= */
-@media (max-width: 480px) {
-  body { padding: 10px; }
-  .brand h1 { font-size: 1.2rem; }
-  .brand img.logo { width: 50px; height: 50px; }
-  .btn { font-size: 0.75rem; padding: 10px 8px; }
-  .card { padding: 15px; }
+@keyframes popIn {
+  from { opacity: 0; transform: translate(-50%, -48%) scale(0.95); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
 </style>
 </head>
-<body>
+<body onclick="handleGlobalClick(event)">
+
+<!-- BOTÓN ENGRANAJE CONFIGURACIÓN -->
+<button class="global-settings-btn" onclick="toggleSettingsModal(event)"><i class="fa-solid fa-gear"></i></button>
 
 <header>
   <div class="brand">
-    <img src="logo.png" class="logo" alt="Logo Aurum">
-    <h1>Aurumsys <span>| VISION</span></h1>
+    <img src="logo.png" class="logo" alt="Logo">
+    <h1 id="txt-brand-title">Aurumsys <span>| VISION</span></h1>
   </div>
 </header>
 
 <section class="grid" id="grid"></section>
 
+<!-- MODAL GLOBAL DE CONFIGURACIÓN -->
+<div class="modal-overlay" id="settingsModal" onclick="event.stopPropagation()">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span id="txt-modal-title"><i class="fa-solid fa-sliders"></i> Configuración del Sistema</span>
+      <button class="sub-panel-close" onclick="closeSettingsModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <div class="form-group">
+      <label id="txt-lang-label">Idioma / Language</label>
+      <select id="langSelect" class="form-control" onchange="changeLanguage(this.value)">
+        <option value="es">Español</option>
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+        <option value="de">Deutsch</option>
+        <option value="zh">中文</option>
+        <option value="ja">日本語</option>
+        <option value="ru">Русский</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label id="txt-theme-label">Tema Visual / Theme</label>
+      <select id="themeSelect" class="form-control" onchange="changeTheme(this.value)">
+        <option value="dark">Oscuro Nativo (Dark)</option>
+        <option value="light">Claro (Light)</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label id="txt-apikey-label">API Key (Alertas Cloud)</label>
+      <input type="text" id="apiKeyInput" class="form-control" placeholder="Ej: aurum_key_99x82...">
+    </div>
+
+    <div class="form-group">
+      <label id="txt-whatsapp-label">Número de WhatsApp (Alertas y Capturas)</label>
+      <input type="text" id="whatsappInput" class="form-control" placeholder="Ej: +56912345678">
+    </div>
+
+    <button class="btn primary" onclick="saveGlobalSettings()" id="txt-save-btn"><i class="fa-solid fa-floppy-disk"></i> Guardar Cambios</button>
+  </div>
+</div>
+
 <script>
-/* ================= CONFIG ================= */
+/* ================= DICCIONARIO MULTILENGUAJE ================= */
+const dict = {
+  es: {
+    trap: "Trampa",
+    liveCam: "Cámara en vivo",
+    calibration: "Calibración",
+    saveCap: "Guardar captura",
+    location: "Ubicación",
+    waiting: "Esperando conexión...",
+    wifiNet: "Estado de Red WiFi",
+    manager: "Gestor de Capturas",
+    coords: "Coordenadas GPS",
+    savedOk: "Imagen guardada con éxito",
+    savedDesc: "El fotograma actual se almacenó localmente.",
+    settingsTitle: "Configuración del Sistema",
+    langLabel: "Idioma / Language",
+    themeLabel: "Tema Visual / Theme",
+    apiKeyLabel: "API Key (Alertas Cloud)",
+    waLabel: "Número de WhatsApp (Alertas)",
+    saveBtn: "Guardar Cambios",
+    connected: "Conectado a la red central"
+  },
+  en: {
+    trap: "Trap",
+    liveCam: "Live Camera",
+    calibration: "Calibration",
+    saveCap: "Save Capture",
+    location: "Location",
+    waiting: "Waiting for connection...",
+    wifiNet: "WiFi Network Status",
+    manager: "Capture Manager",
+    coords: "GPS Coordinates",
+    savedOk: "Image saved successfully",
+    savedDesc: "Current frame stored locally.",
+    settingsTitle: "System Settings",
+    langLabel: "Language",
+    themeLabel: "Visual Theme",
+    apiKeyLabel: "API Key (Cloud Alerts)",
+    waLabel: "WhatsApp Number (Alerts)",
+    saveBtn: "Save Changes",
+    connected: "Connected to core network"
+  },
+  fr: {
+    trap: "Piège",
+    liveCam: "Caméra en direct",
+    calibration: "Étalonnage",
+    saveCap: "Enregistrer",
+    location: "Emplacement",
+    waiting: "En attente de connexion...",
+    wifiNet: "État Réseau WiFi",
+    manager: "Gestionnaire de capture",
+    coords: "Coordonnées GPS",
+    savedOk: "Image enregistrée avec succès",
+    savedDesc: "Cadre actuel stocké localement.",
+    settingsTitle: "Paramètres Système",
+    langLabel: "Langue",
+    themeLabel: "Thème Visuel",
+    apiKeyLabel: "Clé API (Alertes Cloud)",
+    waLabel: "Numéro WhatsApp (Alertes)",
+    saveBtn: "Enregistrer",
+    connected: "Connecté au réseau"
+  },
+  de: {
+    trap: "Falle",
+    liveCam: "Live-Kamera",
+    calibration: "Kalibrierung",
+    saveCap: "Aufnahme speichern",
+    location: "Standort",
+    waiting: "Warte auf Verbindung...",
+    wifiNet: "WiFi-Netzwerkstatus",
+    manager: "Aufnahme-Manager",
+    coords: "GPS-Koordinaten",
+    savedOk: "Bild erfolgreich gespeichert",
+    savedDesc: "Aktuelles Bild lokal gespeichert.",
+    settingsTitle: "Systemeinstellungen",
+    langLabel: "Sprache",
+    themeLabel: "Design",
+    apiKeyLabel: "API-Schlüssel (Cloud-Benachrichtigungen)",
+    waLabel: "WhatsApp-Nummer (Benachrichtigungen)",
+    saveBtn: "Änderungen speichern",
+    connected: "Mit Netzwerk verbunden"
+  },
+  zh: {
+    trap: "捕虫器",
+    liveCam: "实时摄像",
+    calibration: "校准",
+    saveCap: "保存截图",
+    location: "位置",
+    waiting: "等待连接...",
+    wifiNet: "无线网络状态",
+    manager: "截图管理",
+    coords: "GPS 坐标",
+    savedOk: "图片保存成功",
+    savedDesc: "当前帧已本地存储。",
+    settingsTitle: "系统设置",
+    langLabel: "语言",
+    themeLabel: "主题外观",
+    apiKeyLabel: "API 密钥 (云端警报)",
+    waLabel: "WhatsApp 号码 (接收警报)",
+    saveBtn: "保存更改",
+    connected: "已连接到核心网络"
+  },
+  ja: {
+    trap: "トラップ",
+    liveCam: "ライブカメラ",
+    calibration: "キャリブレーション",
+    saveCap: "キャプチャ保存",
+    location: "位置情報",
+    waiting: "接続待機中...",
+    wifiNet: "WiFiネットワーク状態",
+    manager: "キャプチャマネージャー",
+    coords: "GPS座標",
+    savedOk: "画像の保存に成功しました",
+    savedDesc: "現在のフレームがローカルに保存されました。",
+    settingsTitle: "システム設定",
+    langLabel: "言語",
+    themeLabel: "テーマ",
+    apiKeyLabel: "APIキー (クラウドアラート)",
+    waLabel: "WhatsApp番号 (アラート送信先)",
+    saveBtn: "変更を保存",
+    connected: "ネットワーク接続済み"
+  },
+  ru: {
+    trap: "Ловушка",
+    liveCam: "Живая камера",
+    calibration: "Калибровка",
+    saveCap: "Сохранить кадр",
+    location: "Расположение",
+    waiting: "Ожидание подключения...",
+    wifiNet: "Статус сети WiFi",
+    manager: "Менеджер захвата",
+    coords: "GPS Координаты",
+    savedOk: "Изображение успешно сохранено",
+    savedDesc: "Текущий кадр сохранен локально.",
+    settingsTitle: "Системные настройки",
+    langLabel: "Язык",
+    themeLabel: "Тема оформления",
+    apiKeyLabel: "API Ключ (Облачные оповещения)",
+    waLabel: "Номер WhatsApp (Для алертов)",
+    saveBtn: "Сохранить изменения",
+    connected: "Подключено к сети"
+  }
+};
+
+let currentLang = localStorage.getItem('aurum_lang') || 'es';
+let currentTheme = localStorage.getItem('aurum_theme') || 'dark';
+
+document.documentElement.setAttribute('data-theme', currentTheme);
+document.getElementById('themeSelect').value = currentTheme;
+document.getElementById('langSelect').value = currentLang;
+
+function t(key){ return dict[currentLang][key] || dict['es'][key]; }
+
+function updateTexts(){
+  document.getElementById('txt-modal-title').innerHTML = `<i class="fa-solid fa-sliders"></i> ${t('settingsTitle')}`;
+  document.getElementById('txt-lang-label').textContent = t('langLabel');
+  document.getElementById('txt-theme-label').textContent = t('themeLabel');
+  document.getElementById('txt-apikey-label').textContent = t('apiKeyLabel');
+  document.getElementById('txt-whatsapp-label').textContent = t('waLabel');
+  document.getElementById('txt-save-btn').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> ${t('saveBtn')}`;
+
+  for(let i=1; i<=3; i++){
+    const card = document.getElementById(`card${i}`);
+    if(!card) continue;
+    card.querySelector('.card-title').innerHTML = `<i class="fa-solid fa-microchip"></i> ${t('trap')} ${i}`;
+    card.querySelector(`#cam-txt${i}`).textContent = t('liveCam');
+    card.querySelector(`#set-txt${i}`).textContent = t('calibration');
+    card.querySelector(`#save-txt${i}`).textContent = t('saveCap');
+    card.querySelector(`#loc-txt${i}`).textContent = t('location');
+    card.querySelector(`#nosig-txt${i}`).textContent = t('waiting');
+  }
+}
+
+function changeLanguage(lang){
+  currentLang = lang;
+  localStorage.setItem('aurum_lang', lang);
+  updateTexts();
+}
+
+function changeTheme(theme){
+  currentTheme = theme;
+  localStorage.setItem('aurum_theme', theme);
+  document.documentElement.setAttribute('data-theme', theme);
+}
+
+function toggleSettingsModal(e){
+  e.stopPropagation();
+  document.getElementById('settingsModal').classList.toggle('active');
+}
+function closeSettingsModal(){
+  document.getElementById('settingsModal').classList.remove('active');
+}
+function saveGlobalSettings(){
+  alert("¡Configuración guardada con éxito!");
+  closeSettingsModal();
+}
+
+/* ================= CIERRE GLOBAL AL CLIC ================= */
+function handleGlobalClick(e){
+  // Cierra todos los sub-paneles internos de las tarjetas si se hace clic fuera de ellos
+  document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
+}
+
+/* ================= RENDERIZADO DE TARJETAS ================= */
 const TOTAL_TRAPS = 3;
-const CAMERA_LIVE_DURATION = 20000;
-
-const MAIN_ESP_BASE = "http://10.153.210.142";
-const STREAM_URL = MAIN_ESP_BASE + "/stream";
-const FIREBASE_DB = "https://t-sonda-2-default-rtdb.firebaseio.com";
-
-/* ================= UTIL ================= */
-function nowString(){
-  const d = new Date();
-  return d.toISOString().replace("T"," ").substring(0,19);
-}
-
-function rssiToBars(rssi){
-  if(rssi > -60) return '<i class="fa-solid fa-wifi"></i> 100%';
-  if(rssi > -70) return '<i class="fa-solid fa-wifi"></i> 70%';
-  if(rssi > -80) return '<i class="fa-solid fa-wifi" style="opacity:0.6"></i> 40%';
-  return '<i class="fa-solid fa-wifi" style="opacity:0.3; color:var(--danger)"></i> 10%';
-}
-
-/* ================= TOGGLE ================= */
-function moduleKey(id){ return `aurum_module_${id}`; }
-function isEnabled(id){
-  const v = localStorage.getItem(moduleKey(id));
-  return v === null ? true : v === "true";
-}
-function setEnabled(id,val){ localStorage.setItem(moduleKey(id), val); }
-
-/* ================= FIREBASE ================= */
-async function getTrapState(id){
-  const res = await fetch(`${FIREBASE_DB}/traps/${id}.json`).catch(()=>null);
-  return res ? await res.json() : null;
-}
-function sendCommand(id, cmd){
-  fetch(`${FIREBASE_DB}/traps/${id}/command.json`, {
-    method: "PUT", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(cmd)
-  }).catch(e=>console.log("Error", e));
-}
-
-/* ================= FILTROS ================= */
-function applyFilters(previewImg, z, b, c){
-  if(!previewImg) return;
-  previewImg.style.transform = `scale(${z})`;
-  previewImg.style.filter = `brightness(${b}) contrast(${c})`;
-}
-
-/* ================= STREAM ================= */
-async function openLiveCamera(id, container, previewImg, btn){
-  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Conectando...';
-  btn.disabled = true;
-
-  setTimeout(() => {
-    previewImg.style.display = 'block';
-    previewImg.src = `${STREAM_URL}?t=${Date.now()}`;
-    
-    const noSig = container.querySelector('.no-signal');
-    if(noSig) noSig.style.display = 'none';
-
-    btn.innerHTML = '<i class="fa-solid fa-video"></i> Transmitiendo';
-    btn.classList.add('primary');
-
-    setTimeout(()=>{
-      btn.innerHTML = '<i class="fa-solid fa-satellite-dish"></i> Cámara en vivo';
-      btn.classList.remove('primary');
-      btn.disabled = false;
-    }, CAMERA_LIVE_DURATION);
-  }, 1000);
-}
-
-/* ================= RENDER ================= */
 const grid = document.getElementById("grid");
-const mockLocations = ["Sector Alfa - Lat: -33.8, Lon: -70.7", "Sector Beta - Lat: -33.9, Lon: -70.8", "Sector Gamma - Lat: -34.0, Lon: -70.9"];
+const mockLocations = ["Sector Alfa - Lat: -33.8", "Sector Beta - Lat: -33.9", "Sector Gamma - Lat: -34.0"];
 
 for(let i=1; i<=TOTAL_TRAPS; i++){
   const card = document.createElement("div");
   card.className = "card";
-  const isEn = isEnabled(i);
-  const mockBattery = Math.floor(Math.random() * 60) + 40;
+  card.id = `card${i}`;
+  const mockBattery = Math.floor(Math.random() * 50) + 40;
   const loc = mockLocations[i-1];
 
   card.innerHTML = `
-    <div class="card-header">
+    <div class="card-header" onclick="event.stopPropagation()">
       <div class="card-title">
-        <i class="fa-solid fa-microchip"></i> Trampa ${i}
+        <i class="fa-solid fa-microchip"></i> ${t('trap')} ${i}
       </div>
       <div class="telemetry-badges">
-        <span class="badge battery" id="batt${i}"><i class="fa-solid fa-battery-full"></i> ${mockBattery}%</span>
-        <span class="badge wifi" id="wifi${i}" title="Ver red actual"><i class="fa-solid fa-wifi"></i> --</span>
-        <div class="switch-container">
-          <label class="switch">
-            <input type="checkbox" id="toggle${i}" ${isEn ? 'checked' : ''}>
-            <span class="slider"></span>
-          </label>
+        <span class="badge battery"><i class="fa-solid fa-battery-full"></i> ${mockBattery}%</span>
+        <span class="badge wifi" id="wifi${i}"><i class="fa-solid fa-wifi"></i> 100%</span>
+        <div class="switch">
+          <input type="checkbox" id="toggle${i}" checked>
+          <span class="slider"></span>
         </div>
       </div>
     </div>
 
-    <div class="preview-container" id="container${i}">
+    <div class="preview-container" onclick="event.stopPropagation()">
       <div class="overlay-top">
-        <div class="location-tag"><i class="fa-solid fa-location-crosshairs"></i> ${loc.split(',')[0]}</div>
+        <div class="location-tag"><i class="fa-solid fa-location-crosshairs"></i> ${loc}</div>
       </div>
       <div class="no-signal" id="nosig${i}">
-        <i class="fa-regular fa-image"></i>
-        <span>Esperando conexión...</span>
+        <i class="fa-regular fa-image" style="font-size: 1.8rem;"></i>
+        <span id="nosig-txt${i}">${t('waiting')}</span>
       </div>
-      <img src="" id="img${i}" style="display:none;" alt="Cámara">
-      <div class="overlay-bottom">
-        <div class="time-tag" id="time${i}">${nowString()}</div>
-      </div>
+      <img src="" id="img${i}" style="display:none;" alt="Cam">
     </div>
 
-    <div class="action-grid">
-      <button class="btn" id="cam${i}"><i class="fa-solid fa-satellite-dish"></i> Cámara en vivo</button>
-      <button class="btn" id="set${i}"><i class="fa-solid fa-sliders"></i> Calibración</button>
-      <button class="btn" id="save${i}"><i class="fa-solid fa-camera"></i> Guardar captura</button>
-      <button class="btn" id="loc${i}"><i class="fa-solid fa-map-location-dot"></i> Ubicación</button>
+    <div class="action-grid" onclick="event.stopPropagation()">
+      <button class="btn" id="camBtn${i}" onclick="openLive(${i})"><i class="fa-solid fa-satellite-dish"></i> <span id="cam-txt${i}">${t('liveCam')}</span></button>
+      <button class="btn" onclick="toggleSubPanel(event, 'settings${i}')"><i class="fa-solid fa-sliders"></i> <span id="set-txt${i}">${t('calibration')}</span></button>
+      <button class="btn" onclick="toggleSubPanel(event, 'save-panel${i}')"><i class="fa-solid fa-camera"></i> <span id="save-txt${i}">${t('saveCap')}</span></button>
+      <button class="btn" onclick="toggleSubPanel(event, 'loc-panel${i}')"><i class="fa-solid fa-map-location-dot"></i> <span id="loc-txt${i}">${t('location')}</span></button>
     </div>
 
-    <!-- PANEL DE CALIBRACIÓN -->
-    <div class="sub-panel" id="settings${i}">
+    <!-- SUB-PANEL CALIBRACIÓN -->
+    <div class="sub-panel" id="settings${i}" onclick="event.stopPropagation()">
       <div class="sub-panel-header">
-        <span><i class="fa-solid fa-sliders"></i> Calibración de Imagen</span>
-        <button class="sub-panel-close" data-target="settings${i}"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div class="setting-row">
-        <label><span>Zoom Digital</span> <span id="z-val${i}">1.0x</span></label>
-        <input type="range" id="z${i}" min="1" max="3" step="0.1" value="1">
-      </div>
-      <div class="setting-row">
-        <label><span>Brillo IR</span> <span id="b-val${i}">100%</span></label>
-        <input type="range" id="b${i}" min="0.5" max="2" step="0.1" value="1">
-      </div>
-      <div class="setting-row">
-        <label><span>Contraste</span> <span id="c-val${i}">100%</span></label>
-        <input type="range" id="c${i}" min="0.5" max="2" step="0.1" value="1">
-      </div>
-    </div>
-
-    <!-- PANEL DE WIFI -->
-    <div class="sub-panel" id="wifi-panel${i}">
-      <div class="sub-panel-header">
-        <span><i class="fa-solid fa-wifi"></i> Estado de Red WiFi</span>
-        <button class="sub-panel-close" data-target="wifi-panel${i}"><i class="fa-solid fa-xmark"></i></button>
+        <span><i class="fa-solid fa-sliders"></i> Calibración</span>
+        <button class="sub-panel-close" onclick="closePanels()"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="sub-panel-content">
-        <strong id="wifi-ssid${i}">Aurumsys_Net_5G</strong>
-        <p>Señal estable conectada al nodo central.</p>
+        <label>Zoom Digital: 1.0x</label>
+        <input type="range" min="1" max="3" step="0.1" value="1" style="width:100%">
       </div>
     </div>
 
-    <!-- PANEL DE GUARDAR CAPTURA -->
-    <div class="sub-panel" id="save-panel${i}">
+    <!-- SUB-PANEL GUARDAR -->
+    <div class="sub-panel" id="save-panel${i}" onclick="event.stopPropagation()">
       <div class="sub-panel-header">
-        <span><i class="fa-solid fa-camera"></i> Gestor de Capturas</span>
-        <button class="sub-panel-close" data-target="save-panel${i}"><i class="fa-solid fa-xmark"></i></button>
+        <span><i class="fa-solid fa-camera"></i> ${t('manager')}</span>
+        <button class="sub-panel-close" onclick="closePanels()"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="sub-panel-content">
-        <strong>Imagen guardada con éxito</strong>
-        <p>La fotograma actual se almacenó en el directorio local del sistema.</p>
+        <strong>${t('savedOk')}</strong>
+        <p>${t('savedDesc')}</p>
       </div>
     </div>
 
-    <!-- PANEL DE UBICACIÓN -->
-    <div class="sub-panel" id="loc-panel${i}">
+    <!-- SUB-PANEL UBICACIÓN -->
+    <div class="sub-panel" id="loc-panel${i}" onclick="event.stopPropagation()">
       <div class="sub-panel-header">
-        <span><i class="fa-solid fa-map-location-dot"></i> Coordenadas GPS</span>
-        <button class="sub-panel-close" data-target="loc-panel${i}"><i class="fa-solid fa-xmark"></i></button>
+        <span><i class="fa-solid fa-map-location-dot"></i> ${t('coords')}</span>
+        <button class="sub-panel-close" onclick="closePanels()"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="sub-panel-content">
         <strong>${loc}</strong>
-        <p>Dispositivo en línea geolocalizado en campo.</p>
+        <p>${t('connected')}</p>
       </div>
     </div>
-
-    <div class="sync-status"><i class="fa-solid fa-cloud-arrow-up"></i> Sincronizado: ${nowString().split(' ')[1]}</div>
   `;
-
   grid.appendChild(card);
-
-  const toggle = card.querySelector(`#toggle${i}`);
-  const camBtn = card.querySelector(`#cam${i}`);
-  const setBtn = card.querySelector(`#set${i}`);
-  const saveBtn = card.querySelector(`#save${i}`);
-  const locBtn = card.querySelector(`#loc${i}`);
-  const wifiBtn = card.querySelector(`#wifi${i}`);
-  
-  const container = card.querySelector(`#container${i}`);
-  const img = card.querySelector(`#img${i}`);
-  const timeLabel = card.querySelector(`#time${i}`);
-  
-  const settingsPanel = card.querySelector(`#settings${i}`);
-  const wifiPanel = card.querySelector(`#wifi-panel${i}`);
-  const savePanel = card.querySelector(`#save-panel${i}`);
-  const locPanel = card.querySelector(`#loc-panel${i}`);
-
-  const zIn = card.querySelector(`#z${i}`), bIn = card.querySelector(`#b${i}`), cIn = card.querySelector(`#c${i}`);
-  const zVal = card.querySelector(`#z-val${i}`), bVal = card.querySelector(`#b-val${i}`), cVal = card.querySelector(`#c-val${i}`);
-  const wifiSsidLabel = card.querySelector(`#wifi-ssid${i}`);
-
-  // Función para cerrar todos los sub-paneles de la tarjeta antes de abrir uno
-  function closeAllPanels() {
-    settingsPanel.classList.remove('active');
-    wifiPanel.classList.remove('active');
-    savePanel.classList.remove('active');
-    locPanel.classList.remove('active');
-  }
-
-  // Eventos para abrir sub-paneles dinámicos
-  wifiBtn.onclick = async () => {
-    closeAllPanels();
-    try {
-      const state = await getTrapState(i);
-      const ssid = (state && state.ssid) ? state.ssid : "Aurumsys_Net_5G (Red Local)";
-      wifiSsidLabel.textContent = ssid;
-    } catch(e) {
-      wifiSsidLabel.textContent = "Aurumsys_Net_5G";
-    }
-    wifiPanel.classList.add('active');
-  };
-
-  saveBtn.onclick = () => {
-    closeAllPanels();
-    savePanel.classList.add('active');
-  };
-
-  locBtn.onclick = () => {
-    closeAllPanels();
-    locPanel.classList.add('active');
-  };
-
-  setBtn.onclick = () => {
-    const isOpen = settingsPanel.classList.contains('active');
-    closeAllPanels();
-    if(!isOpen) settingsPanel.classList.add('active');
-  };
-
-  // Botones de cierre (X) en los sub-paneles
-  card.querySelectorAll('.sub-panel-close').forEach(closeBtn => {
-    closeBtn.onclick = () => {
-      const targetId = closeBtn.getAttribute('data-target');
-      card.querySelector(`#${targetId}`).classList.remove('active');
-    };
-  });
-
-  setInterval(() => { timeLabel.textContent = nowString(); }, 1000);
-
-  function applyState(){
-    const en = toggle.checked;
-    setEnabled(i, en);
-    card.classList.toggle("disabled", !en);
-    camBtn.disabled = !en || i !== 1;
-    saveBtn.disabled = !en;
-    locBtn.disabled = !en;
-  }
-
-  toggle.addEventListener('change', () => {
-    applyState();
-    sendCommand(i, toggle.checked ? "ENABLE" : "DISABLE");
-  });
-
-  camBtn.onclick = () => openLiveCamera(i, container, img, camBtn);
-
-  const updateFilters = () => {
-    applyFilters(img, zIn.value, bIn.value, cIn.value);
-    zVal.textContent = `${zIn.value}x`;
-    bVal.textContent = `${Math.round(bIn.value * 100)}%`;
-    cVal.textContent = `${Math.round(cIn.value * 100)}%`;
-  };
-
-  zIn.oninput = updateFilters; bIn.oninput = updateFilters; cIn.oninput = updateFilters;
-  applyState();
 }
 
-window.onload = async () => {
-  for(let i=1; i<=TOTAL_TRAPS; i++){
-    const wifiBadge = document.getElementById(`wifi${i}`);
-    const img = document.getElementById(`img${i}`);
-    const noSig = document.getElementById(`nosig${i}`);
+function closePanels(){
+  document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
+}
 
-    try {
-      const state = await getTrapState(i);
-      if(state) {
-        wifiBadge.innerHTML = rssiToBars(state.wifi || -90);
-        if(state.lastCapture === "OK" && state.lastImage){
-          img.src = state.lastImage;
-          img.style.display = 'block';
-          noSig.style.display = 'none';
-        }
-      }
-    } catch(e) {}
-  }
-};
+function toggleSubPanel(e, panelId){
+  e.stopPropagation();
+  const panel = document.getElementById(panelId);
+  const isActive = panel.classList.contains('active');
+  closePanels();
+  if(!isActive) panel.classList.add('active');
+}
+
+function openLive(id){
+  const img = document.getElementById(`img${id}`);
+  const nosig = document.getElementById(`nosig${id}`);
+  img.src = "https://picsum.photos/600/340?random=" + id;
+  img.style.display = 'block';
+  nosig.style.display = 'none';
+}
 </script>
 </body>
 </html>
