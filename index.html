@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Aurumsys | Prototipo Cámaras Trampa</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  /* Nueva paleta de colores: Tema Oscuro/Táctico */
+  --accent: #f39c12; /* Naranja/Ámbar */
+  --accent-hover: #e67e22;
+  --bg-main: #121413; /* Gris muy oscuro casi negro */
+  --card-bg: #1e2220; /* Gris oscuro para las tarjetas */
+  --text-main: #ecf0f1;
+  --muted: rgba(255,255,255,.55);
+  --shadow: 0 8px 24px rgba(0,0,0,.6);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  background: var(--bg-main);
+  color: var(--text-main);
+  font-family: system-ui, -apple-system, sans-serif;
+  padding: 20px;
+}
+
+/* Nuevo Header sin logo de cliente */
+header{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin-bottom:32px;
+  padding-top: 10px;
+}
+
+.brand-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.brand-title span {
+  color: var(--accent);
+  font-weight: 400;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:20px;
+}
+
+.card{
+  position:relative;
+  background: var(--card-bg);
+  border-radius:16px;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  box-shadow:var(--shadow);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.card.disabled{
+  opacity:.5;
+  filter:grayscale(1);
+}
+
+.top-icons{
+  position:absolute;
+  top:16px;
+  right:16px;
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
+
+/* ===== TOGGLE ===== */
+.module-toggle{
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  background: var(--accent);
+  cursor:pointer;
+  box-shadow:0 0 0 3px rgba(0,0,0,.3);
+  transition: 0.3s ease;
+}
+.module-toggle.off{
+  background: rgba(255,255,255,.2);
+}
+
+/* ===== WIFI ===== */
+.wifi{
+  position:relative;
+  width:18px;
+  height:14px;
+  cursor:pointer;
+}
+.wifi span{
+  position:absolute;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  border:2px solid transparent;
+  border-top-color:#fff;
+  border-radius:50%;
+  opacity:.25;
+  transition: 0.3s ease;
+}
+.wifi span:nth-child(1){width:6px;height:6px;opacity:1}
+.wifi span:nth-child(2){width:12px;height:12px}
+.wifi span:nth-child(3){width:18px;height:18px}
+.wifi.level-3 span{opacity:1; border-top-color: var(--accent);}
+.wifi.level-2 span:nth-child(1), .wifi.level-2 span:nth-child(2) {opacity:1; border-top-color: var(--accent);}
+.wifi.level-2 span:nth-child(3){opacity:.25}
+.wifi.level-1 span:nth-child(1){border-top-color: var(--accent);}
+.wifi.level-1 span:nth-child(2),
+.wifi.level-1 span:nth-child(3){opacity:.25}
+
+h2{
+  color: var(--text-main);
+  font-size:1.1rem;
+  font-weight: 600;
+}
+
+/* ===== PREVIEW 4:3 + VISOR ===== */
+.preview{
+  position:relative;
+  background:#050505;
+  border-radius:12px;
+  width:100%;
+  aspect-ratio:4 / 3;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:.85rem;
+  color:var(--muted);
+  overflow:hidden;
+  border: 1px solid rgba(255,255,255,.1);
+  box-shadow: inset 0 0 10px rgba(0,0,0,.8);
+}
+
+.preview img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  transition:.3s;
+}
+
+/* ===== OVERLAY HORA ===== */
+.overlay-time{
+  position:absolute;
+  bottom:8px;
+  right:8px;
+  background:rgba(0,0,0,.7);
+  color: var(--accent);
+  font-size:.7rem;
+  padding:4px 8px;
+  border-radius:6px;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+}
+
+/* ===== WIFI INFO POPUP ===== */
+.wifi-info{
+  position:absolute;
+  top:38px;
+  right:0;
+  background:#111;
+  color: var(--accent);
+  font-size:.7rem;
+  padding:10px 12px;
+  border-radius:8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.8);
+  border: 1px solid rgba(255,255,255,0.1);
+  display:none;
+  z-index:10;
+  width:200px;
+}
+
+.controls{
+  display:flex;
+  gap:10px;
+}
+.controls button{
+  flex:1;
+  font-size:.85rem;
+  background: #2a2f2c;
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-main);
+  padding:12px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:600;
+  transition: 0.2s;
+}
+.controls button:hover:not(:disabled) {
+  background: var(--accent);
+  color: #000;
+  border-color: var(--accent);
+}
+.controls button:disabled{
+  background: rgba(255,255,255,.05);
+  color: var(--muted);
+  cursor:not-allowed;
+  border-color: transparent;
+}
+
+/* ===== SETTINGS ===== */
+.settings{
+  display:none;
+  background: rgba(0,0,0,.25);
+  border-radius:10px;
+  padding:15px;
+  font-size:.75rem;
+  color:var(--text-main);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.settings.active{display:grid; gap: 8px;}
+.settings label{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+
+/* Estilo para los sliders */
+input[type=range] {
+  accent-color: var(--accent);
+}
+
+.history{font-size:.7rem;color:var(--muted); text-align: center; margin-top: 5px;}
+</style>
+</head>
+
+<body>
+
+<header>
+  <!-- Reemplazo del logo por texto estilizado de tu prototipo -->
+  <h1 class="brand-title">Aurumsys <span>Trampas IoT</span></h1>
+</header>
+
+<section class="grid" id="grid"></section>
+
+<script>
+/* ================= CONFIG ================= */
+const TOTAL_TRAPS = 3;
+const CAMERA_LIVE_DURATION = 20000;
+
+/* ===== IP ESP32 ===== */
+const MAIN_ESP_BASE = "http://10.153.210.142";
+const STREAM_URL = MAIN_ESP_BASE + "/stream";
+
+/* ===== FIREBASE ===== */
+const FIREBASE_DB = "https://t-sonda-2-default-rtdb.firebaseio.com";
+
+/* ================= UTIL ================= */
+function nowString(){
+  const d = new Date();
+  return d.toISOString().replace("T"," ").substring(0,19);
+}
+
+function rssiToKbps(rssi){
+  if(rssi > -60) return "30 Mb/s";
+  if(rssi > -70) return "15 Mb/s";
+  if(rssi > -80) return "5 Mb/s";
+  return "1 Mb/s";
+}
+
+/* ================= TOGGLE PERSISTENTE ================= */
+function moduleKey(id){ return `module_enabled_${id}`; }
+function isEnabled(id){
+  const v = localStorage.getItem(moduleKey(id));
+  return v === null ? true : v === "true";
+}
+function setEnabled(id,val){
+  localStorage.setItem(moduleKey(id), val);
+}
+
+/* ================= FIREBASE ================= */
+async function getTrapState(id){
+  const res = await fetch(`${FIREBASE_DB}/traps/${id}.json`);
+  return await res.json();
+}
+
+function sendCommand(id, cmd){
+  fetch(`${FIREBASE_DB}/traps/${id}/command.json`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(cmd)
+  });
+}
+
+/* ================= FILTROS ================= */
+function applyFilters(preview){
+  const img = preview.querySelector("img");
+  if(!img) return;
+
+  const z = preview.dataset.zoom || 1;
+  const b = preview.dataset.bright || 1;
+  const c = preview.dataset.contrast || 1;
+
+  img.style.transform = `scale(${z})`;
+  img.style.filter = `brightness(${b}) contrast(${c})`;
+}
+
+/* ================= STREAM ================= */
+async function openLiveCamera(id, preview){
+  const state = await getTrapState(id);
+  if(state.online !== true){
+    alert("Trampa dormida. Espere próximo evento.");
+    return;
+  }
+
+  preview.innerHTML = `
+    <img src="${STREAM_URL}?t=${Date.now()}">
+    <div class="overlay-time">${nowString()}</div>
+  `;
+
+  applyFilters(preview);
+
+  const clock = setInterval(()=>{
+    const t = preview.querySelector(".overlay-time");
+    if(t) t.textContent = nowString();
+  },1000);
+
+  setTimeout(()=>{
+    clearInterval(clock);
+    loadLastCapture(id, preview, state);
+  }, CAMERA_LIVE_DURATION);
+}
+
+/* ================= ÚLTIMA CAPTURA (DESDE FIREBASE) ================= */
+function loadLastCapture(id, preview, state){
+
+  const url = state.lastImage;   // ← AQUÍ ESTÁ LA CLAVE
+
+  if(!url) return;
+
+  localStorage.setItem(`lastImage_${id}`, url);
+
+  preview.innerHTML = `
+    <img src="${url}">
+    <div class="overlay-time">${nowString()}</div>
+  `;
+
+  applyFilters(preview);
+}
+
+/* ================= GENERAR TARJETAS ================= */
+const grid = document.getElementById("grid");
+
+for(let i=1;i<=TOTAL_TRAPS;i++){
+  const card = document.createElement("div");
+  card.className="card";
+
+  card.innerHTML = `
+    <div class="top-icons">
+      <div class="wifi level-3" id="wifi${i}">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="wifi-info" id="wifiInfo${i}"></div>
+      <div class="module-toggle" id="toggle${i}"></div>
+    </div>
+
+    <h2>Trampa #${i}</h2>
+
+    <div class="preview" id="preview${i}" 
+         data-zoom="1" data-bright="1" data-contrast="1">
+      <span>Sin imagen</span>
+    </div>
+
+    <div class="controls">
+      <button id="cam${i}">📡 En vivo</button>
+      <button id="set${i}">⚙️ Ajustes</button>
+    </div>
+
+    <div class="settings" id="settings${i}">
+      <label>Zoom 
+        <input type="range" min="1" max="2" step="0.1" value="1">
+      </label>
+      <label>Brillo 
+        <input type="range" min="0.5" max="2" step="0.1" value="1">
+      </label>
+      <label>Contraste 
+        <input type="range" min="0.5" max="2" step="0.1" value="1">
+      </label>
+    </div>
+
+    <div class="history">Estado sincronizado con Firebase</div>
+  `;
+
+  grid.appendChild(card);
+
+  const toggle = card.querySelector(`#toggle${i}`);
+  const camBtn = card.querySelector(`#cam${i}`);
+  const setBtn = card.querySelector(`#set${i}`);
+  const preview = card.querySelector(`#preview${i}`);
+  const wifi = card.querySelector(`#wifi${i}`);
+  const wifiInfo = card.querySelector(`#wifiInfo${i}`);
+  const settings = card.querySelector(`#settings${i}`);
+  const sliders = settings.querySelectorAll("input");
+
+  function applyState(){
+    const en = isEnabled(i);
+    toggle.classList.toggle("off", !en);
+    card.classList.toggle("disabled", !en);
+    camBtn.disabled = !en || i !== 1;
+  }
+
+  toggle.onclick = ()=>{
+    const newState = !isEnabled(i);
+    setEnabled(i, newState);
+    sendCommand(i, newState ? "ENABLE" : "DISABLE");
+    applyState();
+  };
+
+  camBtn.onclick = ()=> openLiveCamera(i, preview);
+  setBtn.onclick = ()=> settings.classList.toggle("active");
+
+  sliders[0].oninput = e=>{ preview.dataset.zoom = e.target.value; applyFilters(preview); };
+  sliders[1].oninput = e=>{ preview.dataset.bright = e.target.value; applyFilters(preview); };
+  sliders[2].oninput = e=>{ preview.dataset.contrast = e.target.value; applyFilters(preview); };
+
+  wifi.onclick = async ()=>{
+    const state = await getTrapState(i);
+
+    const rssi = state.wifi || -90;
+    const ssid = state.ssid || "Red desconocida";
+
+    wifiInfo.innerHTML = `
+      <b>SSID:</b> ${ssid}<br>
+      <b>RSSI:</b> ${rssi} dBm<br>
+      <b>Calidad:</b> ${rssiToKbps(rssi)}
+    `;
+
+    wifiInfo.style.display =
+      wifiInfo.style.display === "block" ? "none" : "block";
+  };
+
+  applyState();
+}
+
+/* ================= CARGA AL ABRIR ================= */
+window.onload = async ()=>{
+  for(let i=1;i<=TOTAL_TRAPS;i++){
+    const preview = document.getElementById(`preview${i}`);
+    const wifi = document.getElementById(`wifi${i}`);
+
+    /* mostrar última guardada local */
+    const saved = localStorage.getItem(`lastImage_${i}`);
+    if(saved){
+      preview.innerHTML = `
+        <img src="${saved}">
+        <div class="overlay-time">${nowString()}</div>
+      `;
+      applyFilters(preview);
+    }
+
+    try{
+      const state = await getTrapState(i);
+
+      // wifi nivel
+      if(state.wifi > -60) wifi.className="wifi level-3";
+      else if(state.wifi > -75) wifi.className="wifi level-2";
+      else wifi.className="wifi level-1";
+
+      // cargar última desde firebase
+      if(state.lastCapture === "OK" && state.lastImage){
+        loadLastCapture(i, preview, state);
+      }
+
+    }catch(e){
+      // queda imagen local
+    }
+  }
+};
+</script>
+
+</body>
+</html>
