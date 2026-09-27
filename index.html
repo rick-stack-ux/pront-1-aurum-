@@ -1,4 +1,14 @@
+¡Entendido a la perfección! He aplicado exactamente todos los ajustes que marcaste en las imágenes y que me pediste:
 
+1. **Aumento del modal de configuración un 30% más grande** (`max-width: 580px` y fuentes más cómodas, como se ve en tu primera captura).
+2. **Cierre al hacer clic en cualquier lugar fuera del menú flotante** (tanto para el modal global como para los paneles internos de las tarjetas).
+3. **Restaurada por completo la función del botón WiFi** para que al hacer clic muestre correctamente el estado de red de cada trampa.
+4. **Eliminada la dirección GPS del recuadro superior izquierdo** dentro del visor de la cámara.
+5. **Solucionado el problema en móviles con el botón de engranaje y el título**: ahora el header se adapta de manera flexible, el título reduce ligeramente su tamaño en pantallas pequeñas y el botón de engranaje se ubica al lado de forma limpia sin superponerse jamás al logo ni al texto.
+
+Aquí tienes el código completo corregido y optimizado:
+
+```html
 <!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
@@ -19,7 +29,7 @@
   --danger: #ef4444;
   --success: #10b981;
   --border: rgba(255, 255, 255, 0.08);
-  --panel-bg: rgba(18, 18, 18, 0.95);
+  --panel-bg: rgba(18, 18, 18, 0.98);
 }
 
 :root[data-theme="light"] {
@@ -33,7 +43,7 @@
   --danger: #dc2626;
   --success: #059669;
   --border: rgba(0, 0, 0, 0.1);
-  --panel-bg: rgba(255, 255, 255, 0.95);
+  --panel-bg: rgba(255, 255, 255, 0.98);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -50,43 +60,47 @@ body {
   transition: background 0.3s, color 0.3s;
 }
 
-/* ================= HEADER ================= */
+/* ================= HEADER ADAPTABLE ================= */
 header {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
-  padding: 12px 30px;
+  margin: 0 auto 30px auto;
+  padding: 12px 20px;
   background: var(--bg-card);
   backdrop-filter: blur(10px);
   border: 1px solid var(--border);
   border-radius: 16px;
   box-shadow: 0 4px 30px rgba(0,0,0,0.4);
-  width: max-content;
-  max-width: 100%;
-  margin-left: auto;
-  margin-right: auto;
+  width: 100%;
+  max-width: 500px;
   position: relative;
+  gap: 15px;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
+  min-width: 0;
 }
 
 .brand img.logo {
-  width: 65px;
-  height: 65px;
+  width: 50px;
+  height: 50px;
   object-fit: cover;
-  clip-path: circle(38% at 50% 50%); 
+  clip-path: circle(38% at 50% 50%);
+  flex-shrink: 0;
 }
 
 .brand h1 {
-  font-size: 1.6rem;
+  font-size: 1.3rem;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .brand h1 span {
@@ -94,25 +108,21 @@ header {
   color: var(--text-muted);
 }
 
-/* Botón de Engranaje Global */
+/* Botón de Engranaje Global Integrado en el Header (Sin solaparse) */
 .global-settings-btn {
-  position: fixed;
-  top: 25px;
-  right: 25px;
-  background: var(--bg-card);
+  background: var(--bg-app);
   border: 1px solid var(--border);
   color: var(--text-main);
-  width: 48px;
-  height: 48px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   cursor: pointer;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  flex-shrink: 0;
   transition: all 0.2s;
-  z-index: 1000;
 }
 .global-settings-btn:hover {
   border-color: var(--accent);
@@ -255,34 +265,17 @@ input:checked + .slider:before {
 }
 .no-signal i { font-size: 2rem; opacity: 0.5; }
 
-.overlay-top, .overlay-bottom {
+.overlay-bottom {
   position: absolute;
   left: 0;
+  bottom: 0;
   width: 100%;
   padding: 10px;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
-  pointer-events: none;
-}
-.overlay-bottom {
-  top: auto;
-  bottom: 0;
   background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-}
-
-.location-tag {
-  font-size: 0.75rem;
-  color: var(--text-main);
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  background: rgba(0,0,0,0.6);
-  padding: 4px 8px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  backdrop-filter: blur(4px);
+  pointer-events: none;
 }
 
 .time-tag {
@@ -336,7 +329,7 @@ input:checked + .slider:before {
   cursor: not-allowed;
 }
 
-/* ================= SUB-MENÚS FLOTANTES CENTRADOS EN CADA TARJETA ================= */
+/* ================= SUB-MENÚS FLOTANTES CENTRADOS ================= */
 .sub-panel {
   display: none;
   position: absolute;
@@ -422,7 +415,7 @@ input[type=range]::-webkit-slider-runnable-track {
   border-radius: 2px;
 }
 
-/* ================= MODAL GLOBAL DE CONFIGURACIÓN ================= */
+/* ================= MODAL GLOBAL 30% MÁS GRANDE ================= */
 .modal-overlay {
   display: none;
   position: fixed;
@@ -432,26 +425,31 @@ input[type=range]::-webkit-slider-runnable-track {
   justify-content: center;
   align-items: center;
   z-index: 2000;
+  padding: 15px;
 }
 .modal-overlay.active { display: flex; }
 .modal-box {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  width: 90%; max-width: 450px;
-  border-radius: 20px; padding: 25px;
-  display: flex; flex-direction: column; gap: 18px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+  width: 100%; 
+  max-width: 580px; /* 30% más grande que el anterior */
+  border-radius: 22px; 
+  padding: 32px;
+  display: flex; 
+  flex-direction: column; 
+  gap: 22px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.8);
   animation: popIn 0.3s ease-out;
 }
 .modal-header {
   display: flex; justify-content: space-between; align-items: center;
-  font-size: 1.2rem; font-weight: 700; color: var(--accent);
+  font-size: 1.35rem; font-weight: 700; color: var(--accent);
 }
-.form-group { display: flex; flex-direction: column; gap: 6px; }
-.form-group label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+.form-group { display: flex; flex-direction: column; gap: 8px; }
+.form-group label { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
 .form-control {
   background: var(--bg-app); border: 1px solid var(--border);
-  color: var(--text-main); padding: 10px 12px; border-radius: 8px; font-size: 0.9rem;
+  color: var(--text-main); padding: 12px 14px; border-radius: 10px; font-size: 1rem;
 }
 .form-control:focus { outline: none; border-color: var(--accent); }
 
@@ -462,30 +460,31 @@ input[type=range]::-webkit-slider-runnable-track {
 
 @media (max-width: 480px) {
   body { padding: 10px; }
-  .brand h1 { font-size: 1.2rem; }
-  .brand img.logo { width: 50px; height: 50px; }
+  header { padding: 10px 15px; }
+  .brand h1 { font-size: 1.1rem; }
+  .brand img.logo { width: 40px; height: 40px; }
   .btn { font-size: 0.75rem; padding: 10px 8px; }
   .card { padding: 15px; }
+  .modal-box { padding: 20px; }
 }
 </style>
 </head>
 <body onclick="handleGlobalClick(event)">
 
-<!-- BOTÓN ENGRANAJE GLOBAL -->
-<button class="global-settings-btn" onclick="toggleSettingsModal(event)"><i class="fa-solid fa-gear"></i></button>
-
-<header>
+<header onclick="event.stopPropagation()">
   <div class="brand">
     <img src="logo.png" class="logo" alt="Logo Aurum">
     <h1 id="txt-brand-title">Aurumsys <span>| VISION</span></h1>
   </div>
+  <!-- Botón de Engranaje Global Acoplado de forma Segura -->
+  <button class="global-settings-btn" onclick="toggleSettingsModal(event)"><i class="fa-solid fa-gear"></i></button>
 </header>
 
 <section class="grid" id="grid"></section>
 
 <!-- MODAL GLOBAL DE CONFIGURACIÓN -->
-<div class="modal-overlay" id="settingsModal" onclick="event.stopPropagation()">
-  <div class="modal-box">
+<div class="modal-overlay" id="settingsModal" onclick="closeSettingsModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
     <div class="modal-header">
       <span id="txt-modal-title"><i class="fa-solid fa-sliders"></i> Configuración del Sistema</span>
       <button class="sub-panel-close" onclick="closeSettingsModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -522,7 +521,7 @@ input[type=range]::-webkit-slider-runnable-track {
       <input type="text" id="whatsappInput" class="form-control" placeholder="Ej: +56912345678">
     </div>
 
-    <button class="btn primary" onclick="saveGlobalSettings()" id="txt-save-btn"><i class="fa-solid fa-floppy-disk"></i> Guardar Cambios</button>
+    <button class="btn primary" onclick="saveGlobalSettings()" id="txt-save-btn" style="padding: 14px; font-size: 1rem;"><i class="fa-solid fa-floppy-disk"></i> Guardar Cambios</button>
   </div>
 </div>
 
@@ -714,7 +713,8 @@ function changeTheme(theme){
 
 function toggleSettingsModal(e){
   e.stopPropagation();
-  document.getElementById('settingsModal').classList.toggle('active');
+  closeAllPanels();
+  document.getElementById('settingsModal').classList.add('active');
 }
 function closeSettingsModal(){
   document.getElementById('settingsModal').classList.remove('active');
@@ -728,6 +728,11 @@ function saveGlobalSettings(){
 
 // Cierre global al hacer clic en cualquier parte de la pantalla
 function handleGlobalClick(e){
+  closeAllPanels();
+  closeSettingsModal();
+}
+
+function closeAllPanels() {
   document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
 }
 
@@ -827,9 +832,6 @@ for(let i=1; i<=TOTAL_TRAPS; i++){
     </div>
 
     <div class="preview-container" id="container${i}" onclick="event.stopPropagation()">
-      <div class="overlay-top">
-        <div class="location-tag"><i class="fa-solid fa-location-crosshairs"></i> ${loc.split(',')[0]}</div>
-      </div>
       <div class="no-signal" id="nosig${i}">
         <i class="fa-regular fa-image"></i>
         <span id="nosig-txt${i}">${t('waiting')}</span>
@@ -926,10 +928,6 @@ for(let i=1; i<=TOTAL_TRAPS; i++){
   const zVal = card.querySelector(`#z-val${i}`), bVal = card.querySelector(`#b-val${i}`), cVal = card.querySelector(`#c-val${i}`);
   const wifiSsidLabel = card.querySelector(`#wifi-ssid${i}`);
 
-  window.closeAllPanels = function() {
-    document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
-  };
-
   wifiBtn.onclick = async (e) => {
     e.stopPropagation();
     closeAllPanels();
@@ -994,7 +992,6 @@ for(let i=1; i<=TOTAL_TRAPS; i++){
 }
 
 window.onload = async () => {
-  // Cargar valores guardados de API y WhatsApp si existen
   if(localStorage.getItem('aurum_apikey')) document.getElementById('apiKeyInput').value = localStorage.getItem('aurum_apikey');
   if(localStorage.getItem('aurum_whatsapp')) document.getElementById('whatsappInput').value = localStorage.getItem('aurum_whatsapp');
 
@@ -1019,5 +1016,3 @@ window.onload = async () => {
 </script>
 </body>
 </html>
-
-```
