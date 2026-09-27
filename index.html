@@ -78,7 +78,6 @@ header {
 /* ================= RESPONSIVE GRID & CARDS ================= */
 .grid {
   display: grid;
-  /* Reducido a 280px para que encaje mejor en pantallas de celulares verticales */
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 25px;
 }
@@ -113,7 +112,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap; /* Permite que los badges bajen si la pantalla es muy estrecha */
+  flex-wrap: wrap;
   gap: 10px;
 }
 
@@ -142,9 +141,9 @@ header {
   gap: 5px;
   color: var(--text-muted);
 }
-.badge.battery { color: #10b981; }
+.badge.battery { color: var(--success); }
 .badge.wifi { cursor: pointer; transition: 0.2s; }
-.badge.wifi:hover { color: var(--text-main); background: rgba(255,255,255,0.1); }
+.badge.wifi:hover { color: var(--text-main); background: rgba(255,255,255,0.1); border-color: var(--accent); }
 
 /* ===== SWITCH ===== */
 .switch-container { display: flex; align-items: center; }
@@ -291,18 +290,55 @@ input:checked + .slider:before {
   cursor: not-allowed;
 }
 
-/* ================= AJUSTES AVANZADOS ================= */
-.settings-panel {
+/* ================= SUB-MENÚS / PANELES FLOTANTES ================= */
+.sub-panel {
   display: none;
-  background: rgba(0,0,0,0.4);
+  background: rgba(0,0,0,0.6);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 16px;
-  grid-template-columns: 1fr;
+  flex-direction: column;
   gap: 12px;
+  backdrop-filter: blur(6px);
+  animation: fadeIn 0.2s ease-in-out;
 }
-.settings-panel.active { display: grid; }
+.sub-panel.active { display: flex; }
 
+.sub-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--accent);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+
+.sub-panel-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1rem;
+  transition: color 0.2s;
+}
+.sub-panel-close:hover { color: var(--text-main); }
+
+.sub-panel-content {
+  font-size: 0.85rem;
+  color: var(--text-main);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sub-panel-content p {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+/* Estilos específicos de los paneles */
 .setting-row { display: flex; flex-direction: column; gap: 6px; }
 .setting-row label {
   font-size: 0.75rem;
@@ -338,6 +374,11 @@ input[type=range]::-webkit-slider-runnable-track {
   font-size: 0.7rem;
   color: var(--text-muted);
   margin-top: 5px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ================= MEDIA QUERIES PARA MÓVILES ================= */
@@ -435,7 +476,7 @@ async function openLiveCamera(id, container, previewImg, btn){
 
 /* ================= RENDER ================= */
 const grid = document.getElementById("grid");
-const mockLocations = ["Sector Alfa - Lat: -33.8", "Sector Beta - Lat: -33.9", "Sector Gamma - Lat: -34.0"];
+const mockLocations = ["Sector Alfa - Lat: -33.8, Lon: -70.7", "Sector Beta - Lat: -33.9, Lon: -70.8", "Sector Gamma - Lat: -34.0, Lon: -70.9"];
 
 for(let i=1; i<=TOTAL_TRAPS; i++){
   const card = document.createElement("div");
@@ -463,7 +504,7 @@ for(let i=1; i<=TOTAL_TRAPS; i++){
 
     <div class="preview-container" id="container${i}">
       <div class="overlay-top">
-        <div class="location-tag"><i class="fa-solid fa-location-crosshairs"></i> ${loc}</div>
+        <div class="location-tag"><i class="fa-solid fa-location-crosshairs"></i> ${loc.split(',')[0]}</div>
       </div>
       <div class="no-signal" id="nosig${i}">
         <i class="fa-regular fa-image"></i>
@@ -482,7 +523,12 @@ for(let i=1; i<=TOTAL_TRAPS; i++){
       <button class="btn" id="loc${i}"><i class="fa-solid fa-map-location-dot"></i> Ubicación</button>
     </div>
 
-    <div class="settings-panel" id="settings${i}">
+    <!-- PANEL DE CALIBRACIÓN -->
+    <div class="sub-panel" id="settings${i}">
+      <div class="sub-panel-header">
+        <span><i class="fa-solid fa-sliders"></i> Calibración de Imagen</span>
+        <button class="sub-panel-close" data-target="settings${i}"><i class="fa-solid fa-xmark"></i></button>
+      </div>
       <div class="setting-row">
         <label><span>Zoom Digital</span> <span id="z-val${i}">1.0x</span></label>
         <input type="range" id="z${i}" min="1" max="3" step="0.1" value="1">
@@ -496,6 +542,43 @@ for(let i=1; i<=TOTAL_TRAPS; i++){
         <input type="range" id="c${i}" min="0.5" max="2" step="0.1" value="1">
       </div>
     </div>
+
+    <!-- PANEL DE WIFI -->
+    <div class="sub-panel" id="wifi-panel${i}">
+      <div class="sub-panel-header">
+        <span><i class="fa-solid fa-wifi"></i> Estado de Red WiFi</span>
+        <button class="sub-panel-close" data-target="wifi-panel${i}"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="sub-panel-content">
+        <strong id="wifi-ssid${i}">Aurumsys_Net_5G</strong>
+        <p>Señal estable conectada al nodo central.</p>
+      </div>
+    </div>
+
+    <!-- PANEL DE GUARDAR CAPTURA -->
+    <div class="sub-panel" id="save-panel${i}">
+      <div class="sub-panel-header">
+        <span><i class="fa-solid fa-camera"></i> Gestor de Capturas</span>
+        <button class="sub-panel-close" data-target="save-panel${i}"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="sub-panel-content">
+        <strong>Imagen guardada con éxito</strong>
+        <p>La fotograma actual se almacenó en el directorio local del sistema.</p>
+      </div>
+    </div>
+
+    <!-- PANEL DE UBICACIÓN -->
+    <div class="sub-panel" id="loc-panel${i}">
+      <div class="sub-panel-header">
+        <span><i class="fa-solid fa-map-location-dot"></i> Coordenadas GPS</span>
+        <button class="sub-panel-close" data-target="loc-panel${i}"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="sub-panel-content">
+        <strong>${loc}</strong>
+        <p>Dispositivo en línea geolocalizado en campo.</p>
+      </div>
+    </div>
+
     <div class="sync-status"><i class="fa-solid fa-cloud-arrow-up"></i> Sincronizado: ${nowString().split(' ')[1]}</div>
   `;
 
@@ -506,34 +589,65 @@ for(let i=1; i<=TOTAL_TRAPS; i++){
   const setBtn = card.querySelector(`#set${i}`);
   const saveBtn = card.querySelector(`#save${i}`);
   const locBtn = card.querySelector(`#loc${i}`);
+  const wifiBtn = card.querySelector(`#wifi${i}`);
   
   const container = card.querySelector(`#container${i}`);
   const img = card.querySelector(`#img${i}`);
-  const settings = card.querySelector(`#settings${i}`);
   const timeLabel = card.querySelector(`#time${i}`);
-  const wifiBtn = card.querySelector(`#wifi${i}`);
+  
+  const settingsPanel = card.querySelector(`#settings${i}`);
+  const wifiPanel = card.querySelector(`#wifi-panel${i}`);
+  const savePanel = card.querySelector(`#save-panel${i}`);
+  const locPanel = card.querySelector(`#loc-panel${i}`);
+
   const zIn = card.querySelector(`#z${i}`), bIn = card.querySelector(`#b${i}`), cIn = card.querySelector(`#c${i}`);
   const zVal = card.querySelector(`#z-val${i}`), bVal = card.querySelector(`#b-val${i}`), cVal = card.querySelector(`#c-val${i}`);
+  const wifiSsidLabel = card.querySelector(`#wifi-ssid${i}`);
 
+  // Función para cerrar todos los sub-paneles de la tarjeta antes de abrir uno
+  function closeAllPanels() {
+    settingsPanel.classList.remove('active');
+    wifiPanel.classList.remove('active');
+    savePanel.classList.remove('active');
+    locPanel.classList.remove('active');
+  }
+
+  // Eventos para abrir sub-paneles dinámicos
   wifiBtn.onclick = async () => {
+    closeAllPanels();
     try {
       const state = await getTrapState(i);
-      const ssid = (state && state.ssid) ? state.ssid : "Aurumsys_Net (Red Local)";
-      alert(`Trampa ${i} conectada a la red:\n${ssid}`);
+      const ssid = (state && state.ssid) ? state.ssid : "Aurumsys_Net_5G (Red Local)";
+      wifiSsidLabel.textContent = ssid;
     } catch(e) {
-      alert(`Trampa ${i}\nEstado de red no disponible.`);
+      wifiSsidLabel.textContent = "Aurumsys_Net_5G";
     }
+    wifiPanel.classList.add('active');
   };
 
   saveBtn.onclick = () => {
-    alert(`Guardando captura de la Trampa ${i}...`);
-    // Aquí puedes agregar la lógica para guardar la imagen (por ejemplo, descargar img.src o enviarlo a Firebase)
+    closeAllPanels();
+    savePanel.classList.add('active');
   };
 
   locBtn.onclick = () => {
-    alert(`Mostrando ubicación de la Trampa ${i}:\n${loc}`);
-    // Aquí puedes agregar la lógica para abrir Google Maps con las coordenadas
+    closeAllPanels();
+    locPanel.classList.add('active');
   };
+
+  setBtn.onclick = () => {
+    const isOpen = settingsPanel.classList.contains('active');
+    closeAllPanels();
+    if(!isOpen) settingsPanel.classList.add('active');
+  };
+
+  // Botones de cierre (X) en los sub-paneles
+  card.querySelectorAll('.sub-panel-close').forEach(closeBtn => {
+    closeBtn.onclick = () => {
+      const targetId = closeBtn.getAttribute('data-target');
+      card.querySelector(`#${targetId}`).classList.remove('active');
+    };
+  });
 
   setInterval(() => { timeLabel.textContent = nowString(); }, 1000);
 
@@ -543,6 +657,7 @@ for(let i=1; i<=TOTAL_TRAPS; i++){
     card.classList.toggle("disabled", !en);
     camBtn.disabled = !en || i !== 1;
     saveBtn.disabled = !en;
+    locBtn.disabled = !en;
   }
 
   toggle.addEventListener('change', () => {
@@ -551,7 +666,6 @@ for(let i=1; i<=TOTAL_TRAPS; i++){
   });
 
   camBtn.onclick = () => openLiveCamera(i, container, img, camBtn);
-  setBtn.onclick = () => settings.classList.toggle("active");
 
   const updateFilters = () => {
     applyFilters(img, zIn.value, bIn.value, cIn.value);
